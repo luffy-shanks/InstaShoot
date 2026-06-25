@@ -1,0 +1,1148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>InstaShoot — Reels, shot and delivered fast</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F7F5F2;
+    --paper-dim:#EFEBE5;
+    --ink:#141414;
+    --ink-soft:#3A3733;
+    --stone:#8A8579;
+    --stone-line:#DCD7CE;
+    --white:#FFFFFF;
+    --signal:#C1432A;
+    --signal-dim:#C1432A1A;
+    --signal-soft:#E9D7D0;
+
+    --display: 'Inter Tight', sans-serif;
+    --mono: 'JetBrains Mono', monospace;
+
+    --maxw: 1180px;
+    --pad: 24px;
+  }
+
+  @media(min-width: 900px){
+    :root{ --pad: 56px; }
+  }
+
+  *{ margin:0; padding:0; box-sizing:border-box; }
+
+  html{ scroll-behavior:smooth; }
+
+  body{
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--display);
+    -webkit-font-smoothing: antialiased;
+    overflow-x:hidden;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; scroll-behavior: auto !important; }
+  }
+
+  a{ color:inherit; text-decoration:none; }
+  img{ display:block; max-width:100%; }
+
+  .wrap{ max-width: var(--maxw); margin: 0 auto; padding: 0 var(--pad); }
+
+  /* ---------- visible focus ---------- */
+  a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible{
+    outline: 2px solid var(--signal);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  /* ---------- utility ---------- */
+  .eyebrow{
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--signal);
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .eyebrow::before{
+    content:'';
+    width:7px; height:7px;
+    border-radius:50%;
+    background: var(--signal);
+    box-shadow: 0 0 0 0 rgba(193,67,42,0.6);
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse{
+    0%{ box-shadow: 0 0 0 0 rgba(193,67,42,0.45); }
+    70%{ box-shadow: 0 0 0 7px rgba(193,67,42,0); }
+    100%{ box-shadow: 0 0 0 0 rgba(193,67,42,0); }
+  }
+
+  .btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    font-family: var(--display);
+    font-weight:600;
+    font-size:15px;
+    padding: 14px 26px;
+    border-radius: 999px;
+    border: 1px solid transparent;
+    cursor:pointer;
+    transition: transform .18s ease, background .18s ease, color .18s ease, border-color .18s ease;
+    white-space:nowrap;
+  }
+  .btn:hover{ transform: translateY(-2px); }
+  .btn-primary{ background: var(--ink); color: var(--paper); }
+  .btn-primary:hover{ background: var(--signal); }
+  .btn-ghost{ background: transparent; color: var(--ink); border-color: var(--stone-line); }
+  .btn-ghost:hover{ border-color: var(--ink); }
+
+  .fade-up{
+    opacity:0;
+    transform: translateY(16px);
+    animation: fadeUp .7s cubic-bezier(.2,.7,.2,1) forwards;
+  }
+  @keyframes fadeUp{ to{ opacity:1; transform:none; } }
+
+  /* =================== HEADER =================== */
+  header{
+    position: sticky; top:0; z-index: 50;
+    background: rgba(247,245,242,0.85);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--stone-line);
+  }
+  .nav{
+    display:flex; align-items:center; justify-content:space-between;
+    height: 74px;
+  }
+  .logo{
+    font-weight: 800;
+    font-size: 19px;
+    letter-spacing: -0.01em;
+    display:flex; align-items:center; gap:8px;
+  }
+  .logo .dot{
+    width:9px;height:9px;border-radius:50%;background:var(--signal);
+  }
+  .nav-links{
+    display:none;
+    gap: 36px;
+    font-size: 14.5px;
+    font-weight: 500;
+    color: var(--ink-soft);
+  }
+  @media(min-width:860px){ .nav-links{ display:flex; align-items:center; } }
+  .nav-links a:hover{ color: var(--ink); }
+  .nav-cta{ display:flex; align-items:center; gap:14px; }
+  .nav-cta .btn{ padding: 11px 20px; font-size:14px; }
+
+  .menu-btn{
+    display:flex; flex-direction:column; gap:5px;
+    width: 26px; cursor:pointer; background:none; border:none;
+  }
+  @media(min-width:860px){ .menu-btn{ display:none; } }
+  .menu-btn span{ height:2px; background: var(--ink); width:100%; transition: all .25s ease; }
+
+  .mobile-menu{
+    display:none;
+    flex-direction:column;
+    background: var(--paper);
+    border-bottom: 1px solid var(--stone-line);
+    padding: 8px var(--pad) 24px;
+  }
+  .mobile-menu.open{ display:flex; }
+  .mobile-menu a{
+    padding: 14px 0;
+    border-bottom: 1px solid var(--stone-line);
+    font-weight:500;
+    font-size:15px;
+  }
+  .mobile-menu .btn{ margin-top:16px; }
+
+  /* =================== HERO =================== */
+  .hero{
+    padding: 64px 0 0;
+    position:relative;
+  }
+  @media(min-width:900px){ .hero{ padding: 96px 0 0; } }
+
+  .hero-grid{
+    display:grid;
+    gap: 40px;
+  }
+  @media(min-width:900px){
+    .hero-grid{ grid-template-columns: 1.15fr 0.85fr; align-items:center; gap: 56px; }
+  }
+
+  .hero h1{
+    font-size: 42px;
+    line-height: 0.98;
+    font-weight: 800;
+    letter-spacing: -0.015em;
+    margin: 18px 0 22px;
+  }
+  @media(min-width:560px){ .hero h1{ font-size: 56px; } }
+  @media(min-width:900px){ .hero h1{ font-size: 68px; } }
+
+  .hero h1 em{
+    font-style: normal;
+    color: var(--signal);
+    font-weight: 800;
+  }
+
+  .hero p.lead{
+    font-size: 17px;
+    color: var(--ink-soft);
+    max-width: 480px;
+    line-height:1.55;
+    margin-bottom: 30px;
+  }
+
+  .hero-ctas{ display:flex; flex-wrap:wrap; gap:14px; margin-bottom: 28px; }
+
+  .hero-meta{
+    display:flex; gap: 28px; flex-wrap:wrap;
+    font-family: var(--mono);
+    font-size: 12.5px;
+    color: var(--stone);
+  }
+  .hero-meta b{ color: var(--ink); font-weight:600; }
+
+  /* phone mock */
+  .phone-stage{
+    position:relative;
+    display:flex;
+    justify-content:center;
+  }
+  .phone{
+    width: 240px;
+    aspect-ratio: 9/18.5;
+    border-radius: 34px;
+    background: var(--ink);
+    padding: 10px;
+    box-shadow: 0 30px 60px -20px rgba(20,20,20,0.35);
+    position:relative;
+    transform: rotate(3deg);
+  }
+  @media(min-width:560px){ .phone{ width:270px; } }
+  .phone-screen{
+    width:100%; height:100%;
+    border-radius: 26px;
+    background: #161412;
+    position:relative;
+    overflow:hidden;
+  }
+
+  /* progress bar like Stories/Reels */
+  .reel-progress{
+    position:absolute; top:14px; left:14px; right:14px;
+    z-index:5;
+    display:flex; gap:4px;
+  }
+  .reel-progress .seg{
+    flex:1; height:3px; border-radius:2px;
+    background: rgba(255,255,255,0.28);
+    overflow:hidden;
+  }
+  .reel-progress .seg span{
+    display:block; height:100%; width:0%;
+    background:#fff;
+  }
+  .reel-progress .seg.done span{ width:100%; transition:none; }
+  .reel-progress .seg.active span{
+    animation: fillSeg var(--slide-dur) linear forwards;
+  }
+  @keyframes fillSeg{ from{ width:0%; } to{ width:100%; } }
+
+  /* slides */
+  .reel-slides{
+    position:absolute; inset:0;
+  }
+  .reel-slide{
+    position:absolute; inset:0;
+    opacity:0;
+    background-size: cover;
+    display:flex;
+    align-items:flex-end;
+  }
+  .reel-slide.s1{ background: radial-gradient(circle at 70% 20%, #4a3a3e, transparent 55%), linear-gradient(160deg,#3b2a2e,#1c1416 70%); }
+  .reel-slide.s2{ background: radial-gradient(circle at 30% 25%, #3a3f4a, transparent 55%), linear-gradient(160deg,#222a33,#15181c 70%); }
+  .reel-slide.s3{ background: radial-gradient(circle at 60% 15%, #4a4234, transparent 55%), linear-gradient(160deg,#332c20,#181410 70%); }
+  .reel-slide.s4{ background: radial-gradient(circle at 40% 20%, #2f4a3c, transparent 55%), linear-gradient(160deg,#1f2e25,#131915 70%); }
+  .reel-slide.s5{ background: radial-gradient(circle at 65% 25%, #4a3a2f, transparent 55%), linear-gradient(160deg,#33271c,#181210 70%); }
+
+  .reel-slide.is-active{
+    opacity:1;
+    animation: slidePunch 0.5s cubic-bezier(.2,.8,.2,1);
+  }
+  @keyframes slidePunch{
+    0%{ transform: scale(1.06); filter: brightness(1.3); }
+    100%{ transform: scale(1); filter: brightness(1); }
+  }
+
+  /* simulated motion inside each slide: drifting shape so it doesn't look like a flat photo */
+  .reel-slide .motion-el{
+    position:absolute;
+    border-radius:50%;
+    filter: blur(18px);
+    opacity:.55;
+    background: rgba(255,255,255,0.18);
+    animation: drift 6s ease-in-out infinite;
+  }
+  .reel-slide.is-active .motion-el{ animation-play-state: running; }
+  @keyframes drift{
+    0%,100%{ transform: translate(0,0) scale(1); }
+    50%{ transform: translate(-10px, 12px) scale(1.12); }
+  }
+
+  .phone-tag{
+    position:absolute; top:30px; left:14px;
+    font-family:var(--mono); font-size:9.5px; color:#fff;
+    background: rgba(193,67,42,0.92);
+    padding: 4px 8px; border-radius: 5px; letter-spacing:.04em;
+    z-index:5;
+    display:flex; align-items:center; gap:5px;
+  }
+  .phone-tag .reclight{
+    width:5px; height:5px; border-radius:50%; background:#fff;
+    animation: pulse 1.4s infinite;
+  }
+  .phone-cap{
+    position:absolute; bottom:16px; left:16px; right:16px;
+    color:#fff;
+    z-index:5;
+  }
+  .phone-cap .occasion{ font-size:13px; font-weight:700; transition: opacity .2s ease; }
+  .phone-cap .turn{ font-family:var(--mono); font-size:10.5px; opacity:.75; margin-top:3px; transition: opacity .2s ease; }
+
+  .phone-card-back{
+    position:absolute;
+    width: 240px;
+    aspect-ratio:9/18.5;
+    border-radius:34px;
+    background: var(--paper-dim);
+    border: 1px solid var(--stone-line);
+    top: 26px;
+    transform: rotate(-9deg) translateX(-58px);
+    z-index:-1;
+  }
+  @media(min-width:560px){ .phone-card-back{ width:270px; } }
+  @media(max-width:899px){ .phone-card-back{ display:none; } }
+
+  /* ---------- ticker ---------- */
+  .ticker-wrap{
+    border-top: 1px solid var(--stone-line);
+    border-bottom: 1px solid var(--stone-line);
+    background: var(--paper-dim);
+    overflow:hidden;
+    margin-top: 60px;
+  }
+  .ticker{
+    display:flex;
+    width: max-content;
+    animation: scroll 32s linear infinite;
+  }
+  .ticker:hover{ animation-play-state: paused; }
+  @keyframes scroll{
+    from{ transform: translateX(0); }
+    to{ transform: translateX(-50%); }
+  }
+  .ticker-item{
+    display:flex; align-items:center; gap:10px;
+    font-family: var(--mono);
+    font-size: 13px;
+    padding: 16px 32px;
+    border-right: 1px solid var(--stone-line);
+    white-space:nowrap;
+    color: var(--ink-soft);
+  }
+  .ticker-item .arrow{ color: var(--stone); }
+  .ticker-item .time{ color: var(--signal); font-weight:600; }
+  .ticker-item .done{ color: var(--ink); }
+
+  /* ---------- shared section heading ---------- */
+  section{ padding: 76px 0; }
+  .sec-title{
+    font-size: 30px;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    margin: 14px 0 14px;
+    max-width: 560px;
+  }
+  @media(min-width:900px){ .sec-title{ font-size: 40px; } }
+  .sec-sub{
+    color: var(--ink-soft);
+    max-width: 480px;
+    line-height:1.55;
+    margin-bottom: 44px;
+    font-size:15.5px;
+  }
+
+  .in-view{ opacity:1 !important; transform:none !important; }
+
+  /* =================== OCCASIONS =================== */
+  .occasions{ background: var(--paper-dim); }
+  .occ-grid{
+    display:grid;
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+  @media(min-width:640px){ .occ-grid{ grid-template-columns: 1fr 1fr; } }
+  @media(min-width:1000px){ .occ-grid{ grid-template-columns: repeat(3, 1fr); } }
+
+  .occ-card{
+    background: var(--white);
+    border: 1px solid var(--stone-line);
+    border-radius: 16px;
+    padding: 28px;
+    opacity:0; transform: translateY(14px);
+    transition: opacity .6s ease, transform .6s ease, border-color .25s ease;
+  }
+  .occ-card:hover{ border-color: var(--signal); }
+  .occ-card.in-view{ transition-delay: 0s; }
+  .occ-icon{ font-size: 26px; display:block; margin-bottom:14px; }
+  .occ-card h3{ font-size: 18px; font-weight:700; margin-bottom:8px; }
+  .occ-card p{ font-size: 14px; color: var(--ink-soft); line-height:1.5; }
+  @media(min-width:1000px){
+    .occ-big{ grid-row: span 1; }
+    .occ-wide{ grid-column: span 1; }
+  }
+
+  /* =================== WORK / PORTFOLIO =================== */
+  .work-head{
+    display:flex; flex-direction:column; gap:18px;
+    margin-bottom: 36px;
+  }
+  @media(min-width:700px){
+    .work-head{ flex-direction:row; align-items:flex-end; justify-content:space-between; }
+  }
+  .work-ig{ flex-shrink:0; }
+
+  .reel-strip{
+    display:grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+  }
+  @media(min-width:640px){ .reel-strip{ grid-template-columns: repeat(3, 1fr); } }
+  @media(min-width:1000px){ .reel-strip{ grid-template-columns: repeat(6, 1fr); } }
+
+  .reel-card{
+    opacity:0; transform: translateY(14px);
+    transition: opacity .6s ease, transform .6s ease;
+  }
+  .reel-thumb{
+    aspect-ratio: 9/16;
+    border-radius: 14px;
+    background: linear-gradient(160deg, #2a2622, #161412 65%);
+    position:relative;
+    overflow:hidden;
+    cursor:pointer;
+    transition: transform .25s ease;
+  }
+  .reel-card:hover .reel-thumb{ transform: translateY(-4px); }
+  .reel-tag{
+    position:absolute; top:10px; left:10px;
+    font-family: var(--mono); font-size:9.5px; color:#fff;
+    background: rgba(193,67,42,0.9);
+    padding: 3px 7px; border-radius:4px; letter-spacing:.03em;
+  }
+  .reel-play{
+    position:absolute; inset:0;
+    display:flex; align-items:center; justify-content:center;
+    color: rgba(255,255,255,0.85);
+    font-size: 18px;
+  }
+  .reel-cap{
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    margin-top: 10px;
+    line-height:1.4;
+  }
+
+  /* =================== PROCESS =================== */
+  .process{ background: var(--paper-dim); }
+  .process-grid{
+    display:grid;
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+  @media(min-width:700px){ .process-grid{ grid-template-columns: repeat(2, 1fr); } }
+  @media(min-width:1000px){ .process-grid{ grid-template-columns: repeat(4, 1fr); } }
+
+  .proc-step{
+    border-top: 2px solid var(--ink);
+    padding-top: 18px;
+    opacity:0; transform: translateY(14px);
+    transition: opacity .6s ease, transform .6s ease;
+  }
+  .proc-time{
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--signal);
+    font-weight:600;
+  }
+  .proc-step h3{ font-size:18px; font-weight:700; margin: 10px 0 8px; }
+  .proc-step p{ font-size:14px; color: var(--ink-soft); line-height:1.5; }
+
+  /* =================== PRICING =================== */
+  .price-grid{
+    display:grid;
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+  @media(min-width:760px){ .price-grid{ grid-template-columns: repeat(3, 1fr); } }
+
+  .price-card{
+    background: var(--white);
+    border: 1px solid var(--stone-line);
+    border-radius: 18px;
+    padding: 32px;
+    display:flex; flex-direction:column;
+    position:relative;
+    opacity:0; transform: translateY(14px);
+    transition: opacity .6s ease, transform .6s ease;
+  }
+  .price-featured{
+    background: var(--ink);
+    color: var(--paper);
+    border-color: var(--ink);
+  }
+  .price-badge{
+    position:absolute; top:-12px; left:28px;
+    background: var(--signal); color:#fff;
+    font-family: var(--mono); font-size: 10.5px;
+    padding: 5px 11px; border-radius: 999px;
+    letter-spacing:.03em;
+  }
+  .price-card h3{ font-size: 19px; font-weight:700; margin-bottom:6px; }
+  .price-sub{ font-size: 13.5px; color: var(--stone); margin-bottom:22px; }
+  .price-featured .price-sub{ color: #B8B3AC; }
+  .price-num{ font-size: 32px; font-weight:800; margin-bottom: 22px; font-family: var(--mono); letter-spacing:-0.01em;}
+  .price-card ul{ list-style:none; margin-bottom: 28px; flex-grow:1; }
+  .price-card li{
+    font-size: 14px;
+    padding: 10px 0;
+    border-top: 1px solid var(--stone-line);
+  }
+  .price-featured li{ border-top-color: rgba(255,255,255,0.15); }
+  .price-card li:first-child{ border-top:none; }
+  .price-cta{ width:100%; }
+  .price-featured .btn-primary{ background: var(--signal); color:#fff; }
+  .price-featured .btn-primary:hover{ background:#a8381f; }
+
+  /* =================== TESTIMONIALS =================== */
+  .testi-grid{
+    display:grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  @media(min-width:760px){ .testi-grid{ grid-template-columns: repeat(3, 1fr); } }
+  .testi-card{
+    background: var(--white);
+    border: 1px solid var(--stone-line);
+    border-radius: 16px;
+    padding: 26px;
+    opacity:0; transform: translateY(14px);
+    transition: opacity .6s ease, transform .6s ease;
+  }
+  .testi-card p{ font-size: 14.5px; line-height:1.6; margin-bottom:16px; color: var(--ink); }
+  .testi-card span{ font-family: var(--mono); font-size: 12px; color: var(--stone); }
+
+  /* =================== BOOKING =================== */
+  .book{ background: var(--paper-dim); }
+  .book-grid{
+    display:grid;
+    grid-template-columns: 1fr;
+    gap: 44px;
+  }
+  @media(min-width:900px){ .book-grid{ grid-template-columns: 0.85fr 1.15fr; align-items:start; } }
+  .book-direct{ display:flex; flex-wrap:wrap; gap:14px; margin-top: 8px; }
+
+  .book-form{
+    background: var(--white);
+    border: 1px solid var(--stone-line);
+    border-radius: 18px;
+    padding: 28px;
+    display:grid;
+    gap: 16px;
+  }
+  .book-form label{
+    display:flex; flex-direction:column;
+    font-size: 13px; font-weight:600;
+    color: var(--ink-soft);
+    gap: 7px;
+  }
+  .book-form input, .book-form select, .book-form textarea{
+    font-family: var(--display);
+    font-size: 14.5px;
+    padding: 12px 14px;
+    border: 1px solid var(--stone-line);
+    border-radius: 10px;
+    background: var(--paper);
+    color: var(--ink);
+    resize: vertical;
+  }
+  .book-form input:focus, .book-form select:focus, .book-form textarea:focus{
+    outline: 2px solid var(--signal);
+    outline-offset: 1px;
+    border-color: var(--signal);
+  }
+  .book-submit{ margin-top: 4px; }
+  .book-note{ font-size: 13px; min-height: 18px; }
+
+  /* =================== FOOTER =================== */
+  footer{
+    background: var(--ink);
+    color: var(--paper);
+    padding-top: 60px;
+  }
+  .foot-grid{
+    display:grid;
+    grid-template-columns: 1fr;
+    gap: 36px;
+    padding-bottom: 40px;
+    border-bottom: 1px solid rgba(255,255,255,0.12);
+  }
+  @media(min-width:700px){ .foot-grid{ grid-template-columns: 1.4fr 1fr 1fr; } }
+  footer .logo{ color: var(--paper); }
+  .foot-tag{ color: #B8B3AC; font-size: 14px; margin-top: 10px; max-width: 260px; line-height:1.5; }
+  .foot-links h4{ font-size: 13px; color: #B8B3AC; margin-bottom: 14px; font-weight:600; text-transform:uppercase; letter-spacing:.04em; }
+  .foot-links a{ display:block; font-size: 14.5px; color: #E5E1DA; padding: 6px 0; }
+  .foot-links a:hover{ color: var(--signal); }
+  .foot-bottom{
+    display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px;
+    padding: 22px var(--pad) 28px;
+    font-size: 12.5px;
+    color: #807A71;
+    font-family: var(--mono);
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap nav">
+    <a href="#" class="logo"><img src="assets/logo.png" alt="InstaShoot Logo" style="height: 58px; width: auto; display: block;"></a>
+    <nav class="nav-links">
+      <a href="#work">Work</a>
+      <a href="#occasions">Occasions</a>
+      <a href="#process">Process</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+    <div class="nav-cta">
+      <a href="#book" class="btn btn-primary">Book a shoot</a>
+      <button class="menu-btn" id="menuBtn" aria-label="Open menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="#work">Work</a>
+    <a href="#occasions">Occasions</a>
+    <a href="#process">Process</a>
+    <a href="#pricing">Pricing</a>
+    <a href="#faq">FAQ</a>
+    <a href="#book" class="btn btn-primary">Book a shoot</a>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <p class="eyebrow fade-up">Shot today. Delivered tonight.</p>
+      <h1 class="fade-up" style="animation-delay:.05s">Reels for<br>every <em>occasion</em>,<br>made fast.</h1>
+      <p class="lead fade-up" style="animation-delay:.1s">
+        InstaShoot shoots, edits, and delivers Instagram-ready reels in hours — not weeks. Weddings, car deliveries, store launches, birthdays, anything worth capturing, we cover it on your timeline.
+      </p>
+      <div class="hero-ctas fade-up" style="animation-delay:.15s">
+        <a href="#book" class="btn btn-primary">Book a shoot →</a>
+        <a href="#work" class="btn btn-ghost">See the reels</a>
+      </div>
+      <div class="hero-meta fade-up" style="animation-delay:.2s">
+        <span><b>4–24 hr</b> turnaround</span>
+        <span><b>120+</b> reels delivered</span>
+        <span><b>18</b> occasion types</span>
+      </div>
+    </div>
+    <div class="phone-stage fade-up" style="animation-delay:.1s">
+      <div class="phone-card-back"></div>
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="reel-progress" id="reelProgress"></div>
+          <div class="reel-slides" id="reelSlides">
+            <div class="reel-slide s1">
+              <video src="assets/IMG_2719.MOV" loop muted playsinline style="width: 100%; height: 100%; object-fit: cover; display: block;"></video>
+            </div>
+            <div class="reel-slide s2">
+              <video src="assets/IMG_1479.mov" loop muted playsinline style="width: 100%; height: 100%; object-fit: cover; display: block;"></video>
+            </div>
+            <div class="reel-slide s3">
+              <video src="assets/IMG_2837.MOV" loop muted playsinline style="width: 100%; height: 100%; object-fit: cover; display: block;"></video>
+            </div>
+            <div class="reel-slide s4"><span class="motion-el" style="width:130px;height:130px;top:25%;left:20%;"></span></div>
+            <div class="reel-slide s5"><span class="motion-el" style="width:125px;height:125px;top:18%;left:35%;"></span></div>
+          </div>
+          <div class="phone-tag"><span class="reclight"></span>LIVE EDIT</div>
+          <div class="phone-cap">
+            <div class="occasion" id="capOccasion">Reel — Car Delivery</div>
+            <div class="turn" id="capTurn">shot 11:40am → delivered 3:05pm</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ticker-wrap">
+    <div class="ticker" id="ticker"></div>
+  </div>
+</section>
+
+<!-- =================== OCCASIONS =================== -->
+<section id="occasions" class="occasions">
+  <div class="wrap">
+    <p class="eyebrow">What we shoot</p>
+    <h2 class="sec-title">One crew, every occasion.</h2>
+    <p class="sec-sub">If it's worth showing up for, it's worth a reel. Pick a category or tell us what's happening — we'll figure out the rest.</p>
+    <div class="occ-grid">
+      <div class="occ-card occ-big">
+        <span class="occ-icon">💍</span>
+        <h3>Weddings &amp; Engagements</h3>
+        <p>Full-day coverage cut into same-day highlight reels — not a six-week wait.</p>
+      </div>
+      <div class="occ-card">
+        <span class="occ-icon">🚗</span>
+        <h3>Car &amp; Bike Delivery</h3>
+        <p>Showroom handover reels, ready before the customer gets home.</p>
+      </div>
+      <div class="occ-card">
+        <span class="occ-icon">🎂</span>
+        <h3>Birthdays</h3>
+        <p>Candid, fast-cut party recaps your guests actually rewatch.</p>
+      </div>
+      <div class="occ-card">
+        <span class="occ-icon">🛍️</span>
+        <h3>Store Launches</h3>
+        <p>Opening-day energy, posted while the queue's still outside.</p>
+      </div>
+      <div class="occ-card">
+        <span class="occ-icon">🏠</span>
+        <h3>Housewarmings</h3>
+        <p>Walk-throughs and warm moments, delivered before the guests leave.</p>
+      </div>
+      <div class="occ-card">
+        <span class="occ-icon">🎓</span>
+        <h3>Graduations</h3>
+        <p>Cap-toss to family hugs, edited the same evening.</p>
+      </div>
+      <div class="occ-card occ-wide">
+        <span class="occ-icon">✨</span>
+        <h3>Anything else</h3>
+        <p>Product drops, baby showers, brand events, farewells — if you can describe it, we can shoot it on short notice.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =================== PORTFOLIO =================== -->
+<section id="work" class="work">
+  <div class="wrap">
+    <div class="work-head">
+      <div>
+        <p class="eyebrow">Recent deliveries</p>
+        <h2 class="sec-title">Straight from the feed.</h2>
+      </div>
+      <a href="https://www.instagram.com/instashootstudio?igsh=MTltZ2Uxbnd1ZndlaQ==" target="_blank" rel="noopener" class="btn btn-ghost work-ig">View on Instagram →</a>
+    </div>
+    <div class="reel-strip" id="reelStrip">
+      <!-- reel cards injected by JS / replace with real thumbnails -->
+    </div>
+  </div>
+</section>
+
+<!-- =================== PROCESS =================== -->
+<section id="process" class="process">
+  <div class="wrap">
+    <p class="eyebrow">How it works</p>
+    <h2 class="sec-title">From a DM to delivered, same day.</h2>
+    <div class="process-grid">
+      <div class="proc-step">
+        <span class="proc-time">0:00</span>
+        <h3>You reach out</h3>
+        <p>DM, WhatsApp, or the form below with your date, location, and occasion.</p>
+      </div>
+      <div class="proc-step">
+        <span class="proc-time">+1 hr</span>
+        <h3>We confirm &amp; show up</h3>
+        <p>Crew arrives on time with the gear suited to your event, no scouting visit needed.</p>
+      </div>
+      <div class="proc-step">
+        <span class="proc-time">+3–6 hr</span>
+        <h3>Shoot &amp; edit</h3>
+        <p>We shoot tight, then cut it the same day — trends, captions, and pacing handled.</p>
+      </div>
+      <div class="proc-step">
+        <span class="proc-time">≤24 hr</span>
+        <h3>Delivered</h3>
+        <p>Reel lands in your DMs ready to post, in the format your occasion needs.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =================== PRICING =================== -->
+<section id="pricing" class="pricing">
+  <div class="wrap">
+    <p class="eyebrow">Packages</p>
+    <h2 class="sec-title">Simple pricing, no scope creep.</h2>
+    <div class="price-grid">
+      <div class="price-card">
+        <h3>Half Coverage</h3>
+        <p class="price-sub">For smaller events & shoots</p>
+        <div class="price-num">₹4,999</div>
+        <ul>
+          <li>Up to 3 hours on-site</li>
+          <li>3 edited reels</li>
+          <li>Complementary candid photos</li>
+          <li>Delivered same day</li>
+        </ul>
+        <a href="#book" class="btn btn-ghost price-cta">Choose Half Coverage</a>
+      </div>
+      <div class="price-card price-featured">
+        <span class="price-badge">Most booked</span>
+        <h3>Full Coverage</h3>
+        <p class="price-sub">Haldi + full wedding coverage</p>
+        <div class="price-num">₹8,999</div>
+        <ul>
+          <li>Up to 6 hours on-site</li>
+          <li>Haldi + full wedding</li>
+          <li>Complementary candid photos</li>
+          <li>No limit on reels duration</li>
+        </ul>
+        <a href="#book" class="btn btn-primary price-cta">Choose Full Coverage</a>
+      </div>
+      <div class="price-card">
+        <h3>Custom</h3>
+        <p class="price-sub">Multi-day, brand, or recurring work</p>
+        <div class="price-num">Let's talk</div>
+        <ul>
+          <li>Flexible crew &amp; duration</li>
+          <li>Volume reel packages</li>
+          <li>Dedicated turnaround SLA</li>
+        </ul>
+        <a href="#book" class="btn btn-ghost price-cta">Get a quote</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =================== TESTIMONIALS =================== -->
+<section class="testimonials">
+  <div class="wrap">
+    <p class="eyebrow">From past clients</p>
+    <div class="testi-grid">
+      <div class="testi-card">
+        <p>"Booked them the morning of the delivery, reel was in our DMs before the customer even left the showroom."</p>
+        <span>— Showroom Manager, Vijayawada</span>
+      </div>
+      <div class="testi-card">
+        <p>"Our wedding reel was posted before the reception ended. Guests thought we hired a whole agency."</p>
+        <span>— Bride, June 2026</span>
+      </div>
+      <div class="testi-card">
+        <p>"Fast, no fuss, and the edit actually matched our brand's vibe. Rebooked for every launch since."</p>
+        <span>— D2C Founder</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =================== BOOKING =================== -->
+<section id="book" class="book">
+  <div class="wrap book-grid">
+    <div>
+      <p class="eyebrow">Let's lock a date</p>
+      <h2 class="sec-title">Tell us what's happening.</h2>
+      <p class="sec-sub">Fill this in or just message us directly — whichever's faster for you.</p>
+      <div class="book-direct">
+        <a href="https://wa.me/916302939244?text=Hi%20InstaShoot!%20I%20would%20like%20to%20book%20a%20shoot." target="_blank" rel="noopener" class="btn btn-primary">WhatsApp us →</a>
+        <a href="https://ig.me/m/instashootstudio" target="_blank" rel="noopener" class="btn btn-ghost">DM on Instagram</a>
+      </div>
+    </div>
+    <form class="book-form" id="bookForm">
+      <label>Name
+        <input type="text" name="name" placeholder="Your name" required>
+      </label>
+      <label>Occasion
+        <select name="occasion" required>
+          <option value="">Select one</option>
+          <option>Wedding / Engagement</option>
+          <option>Car / Bike Delivery</option>
+          <option>Birthday</option>
+          <option>Store Launch</option>
+          <option>Housewarming</option>
+          <option>Graduation</option>
+          <option>Other</option>
+        </select>
+      </label>
+      <label>Date
+        <input type="date" name="date" required>
+      </label>
+      <label>Location
+        <input type="text" name="location" placeholder="City / venue" required>
+      </label>
+      <label>Anything we should know?
+        <textarea name="notes" rows="3" placeholder="Number of guests, must-have shots, timing..."></textarea>
+      </label>
+      <button type="submit" class="btn btn-primary book-submit">Request booking</button>
+      <p class="book-note" id="bookNote"></p>
+    </form>
+  </div>
+</section>
+
+<!-- Fullscreen Reel Modal -->
+<div id="reelModal" style="position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 1000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(10px); opacity: 0; transition: opacity 0.3s ease;">
+  <button id="closeReelBtn" aria-label="Close video" style="position: absolute; top: 24px; right: 24px; background: none; border: none; color: #fff; font-size: 38px; cursor: pointer; z-index: 1010; transition: transform 0.2s ease;">&times;</button>
+  <div style="width: 100%; max-width: 420px; aspect-ratio: 9/16; max-height: 90vh; background: #000; border-radius: 20px; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.8); position: relative;">
+    <video id="modalVideo" src="" loop controls autoplay playsinline style="width: 100%; height: 100%; object-fit: cover;"></video>
+  </div>
+</div>
+
+<footer>
+  <div class="wrap foot-grid">
+    <div>
+      <a href="#" class="logo"><img src="assets/logo.png" alt="InstaShoot Logo" style="height: 58px; width: auto; display: block;"></a>
+      <p class="foot-tag">Reels, shot and delivered fast — for every occasion.</p>
+    </div>
+    <div class="foot-links">
+      <h4>Explore</h4>
+      <a href="#work">Work</a>
+      <a href="#occasions">Occasions</a>
+      <a href="#process">Process</a>
+      <a href="#pricing">Pricing</a>
+    </div>
+    <div class="foot-links">
+      <h4>Reach us</h4>
+      <a href="https://www.instagram.com/instashootstudio?igsh=MTltZ2Uxbnd1ZndlaQ==" target="_blank" rel="noopener">Instagram</a>
+      <a href="https://wa.me/916302939244?text=Hi%20InstaShoot!%20I%20would%20like%20to%20book%20a%20shoot." target="_blank" rel="noopener">WhatsApp</a>
+      <a href="mailto:hello@instashoot.com">hello@instashoot.com</a>
+    </div>
+  </div>
+  <div class="wrap foot-bottom">
+    <span>© 2026 InstaShoot. All reels reserved.</span>
+  </div>
+</footer>
+
+<script>
+  // mobile menu toggle
+  const menuBtn = document.getElementById('menuBtn');
+  const mobileMenu = document.getElementById('mobileMenu');
+  menuBtn.addEventListener('click', () => {
+    const open = mobileMenu.classList.toggle('open');
+    menuBtn.setAttribute('aria-expanded', open);
+  });
+  mobileMenu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+    mobileMenu.classList.remove('open');
+    menuBtn.setAttribute('aria-expanded', false);
+  }));
+
+  // hero "live edit" cycling reel
+  const heroSlides = [
+    { occasion: 'Reel — Groom Entry', turn: 'shot 11:40am → delivered 3:05pm' },
+    { occasion: 'Reel — Wedding Highlight', turn: 'shot 9:00am → delivered 4:20pm' },
+    { occasion: 'Reel', turn: 'shot 5:30pm → delivered 9:15pm' },
+    { occasion: 'Reel — Store Launch', turn: 'shot 10:00am → delivered 1:45pm' },
+    { occasion: 'Reel — Housewarming', turn: 'shot 6:00pm → delivered 9:30pm' },
+  ];
+  const SLIDE_MS = 4000;
+  const slideEls = document.querySelectorAll('#reelSlides .reel-slide');
+  const progressWrap = document.getElementById('reelProgress');
+  const capOccasion = document.getElementById('capOccasion');
+  const capTurn = document.getElementById('capTurn');
+  let heroIdx = 0;
+
+  function buildProgressSegs(){
+    progressWrap.innerHTML = heroSlides.map(() => '<div class="seg"><span></span></div>').join('');
+  }
+  buildProgressSegs();
+  const segEls = () => progressWrap.querySelectorAll('.seg');
+
+  function showHeroSlide(i){
+    slideEls.forEach((el, idx) => {
+      const isActive = idx === i;
+      el.classList.toggle('is-active', isActive);
+      const video = el.querySelector('video');
+      if (video) {
+        if (isActive) {
+          video.currentTime = 0;
+          video.play().catch(() => {});
+        } else {
+          video.pause();
+        }
+      }
+    });
+    segEls().forEach((seg, idx) => {
+      seg.classList.remove('active','done');
+      seg.style.setProperty('--slide-dur', SLIDE_MS + 'ms');
+      if(idx < i) seg.classList.add('done');
+      if(idx === i) seg.classList.add('active');
+    });
+    capOccasion.style.opacity = 0;
+    capTurn.style.opacity = 0;
+    setTimeout(() => {
+      capOccasion.textContent = heroSlides[i].occasion;
+      capTurn.textContent = heroSlides[i].turn;
+      capOccasion.style.opacity = 1;
+      capTurn.style.opacity = 1;
+    }, 180);
+  }
+  showHeroSlide(0);
+  setInterval(() => {
+    heroIdx = (heroIdx + 1) % heroSlides.length;
+    showHeroSlide(heroIdx);
+  }, SLIDE_MS);
+
+  // ticker content
+  const tickerData = [
+    { occ: 'Wedding', time: '5h 20m', loc: 'Vijayawada' },
+    { occ: 'Car Delivery', time: '3h 25m', loc: 'Guntur' },
+    { occ: 'Birthday', time: '2h 10m', loc: 'Hyderabad' },
+    { occ: 'Store Launch', time: '4h 00m', loc: 'Vijayawada' },
+    { occ: 'Housewarming', time: '3h 45m', loc: 'Vizag' },
+    { occ: 'Bike Delivery', time: '1h 50m', loc: 'Guntur' },
+    { occ: 'Graduation', time: '2h 30m', loc: 'Hyderabad' },
+    { occ: 'Engagement', time: '4h 40m', loc: 'Vijayawada' },
+  ];
+  const tickerEl = document.getElementById('ticker');
+  function buildTicker(){
+    const set = tickerData.map(d => `
+      <div class="ticker-item">
+        <span class="done">${d.occ}</span>
+        <span class="arrow">→</span>
+        <span>${d.loc}</span>
+        <span class="arrow">·</span>
+        <span class="time">${d.time}</span>
+        <span class="arrow">·</span>
+        <span class="done">delivered</span>
+      </div>`).join('');
+    tickerEl.innerHTML = set + set; // duplicate for seamless loop
+  }
+  buildTicker();
+
+  // reel strip placeholders (swap with real thumbnails when uploaded)
+  const reels = [
+    { tag: 'Wedding', cap: 'First dance, cut in 5 hours', video: 'assets/IMG_1479.mov' },
+    { tag: 'Groom Entry', cap: 'Stylish wedding entry reel', video: 'assets/IMG_2719.MOV' },
+    { tag: 'Reel', cap: 'Traditional ceremony highlight', video: 'assets/IMG_2837.MOV' },
+    { tag: 'Launch', cap: 'Store opening hype reel' },
+    { tag: 'Housewarming', cap: 'Walkthrough + warm moments' },
+    { tag: 'Engagement', cap: 'Ring reveal, posted live' },
+  ];
+  const strip = document.getElementById('reelStrip');
+  strip.innerHTML = reels.map(r => {
+    const hasVideo = !!r.video;
+    const thumbnailContent = hasVideo 
+      ? `<video src="${r.video}" loop muted autoplay playsinline style="width: 100%; height: 100%; object-fit: cover; position: absolute; inset: 0;"></video>`
+      : ``;
+    return `
+      <div class="reel-card" ${hasVideo ? `data-video="${r.video}"` : ''} style="${hasVideo ? 'cursor: pointer;' : ''}">
+        <div class="reel-thumb">
+          ${thumbnailContent}
+          <span class="reel-tag">${r.tag}</span>
+          <span class="reel-play">▶</span>
+        </div>
+        <p class="reel-cap">${r.cap}</p>
+      </div>`;
+  }).join('');
+
+  const modal = document.getElementById('reelModal');
+  const modalVideo = document.getElementById('modalVideo');
+  const closeBtn = document.getElementById('closeReelBtn');
+
+  // open modal on card click
+  document.querySelectorAll('.reel-card[data-video]').forEach(card => {
+    card.addEventListener('click', () => {
+      const videoSrc = card.getAttribute('data-video');
+      modalVideo.src = videoSrc;
+      modal.style.display = 'flex';
+      setTimeout(() => {
+        modal.style.opacity = '1';
+      }, 10);
+      modalVideo.play().catch(() => {});
+    });
+  });
+
+  // close modal function
+  function closeReelModal() {
+    modal.style.opacity = '0';
+    setTimeout(() => {
+      modal.style.display = 'none';
+      modalVideo.pause();
+      modalVideo.src = '';
+    }, 300);
+  }
+
+  closeBtn.addEventListener('click', closeReelModal);
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) {
+      closeReelModal();
+    }
+  });
+
+  // booking form (submits details to WhatsApp)
+  const form = document.getElementById('bookForm');
+  const note = document.getElementById('bookNote');
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const formData = new FormData(form);
+    const name = formData.get('name');
+    const occasion = formData.get('occasion');
+    const date = formData.get('date');
+    const location = formData.get('location');
+    const notes = formData.get('notes');
+
+    const messageLines = [
+      `New Booking Request — InstaShoot`,
+      `Name: ${name}`,
+      `Occasion: ${occasion}`,
+      `Date: ${date}`,
+      `Location: ${location}`,
+      notes ? `Notes: ${notes}` : null
+    ].filter(Boolean);
+
+    const waText = encodeURIComponent(messageLines.join('\n'));
+    const waUrl = `https://wa.me/916302939244?text=${waText}`;
+
+    note.textContent = "Redirecting you to WhatsApp to send booking details...";
+    note.style.color = 'var(--signal)';
+    
+    setTimeout(() => {
+      window.open(waUrl, '_blank');
+      note.textContent = "Details generated! If WhatsApp did not open automatically, please click 'WhatsApp us' on the left.";
+      form.reset();
+    }, 1000);
+  });
+
+  // scroll reveal for sections
+  const revealEls = document.querySelectorAll('.occ-card, .proc-step, .price-card, .testi-card, .reel-card');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(en => {
+      if(en.isIntersecting){
+        en.target.classList.add('in-view');
+        io.unobserve(en.target);
+      }
+    });
+  }, { threshold: 0.15 });
+  revealEls.forEach(el => io.observe(el));
+</script>
+
+</body>
+</html>
