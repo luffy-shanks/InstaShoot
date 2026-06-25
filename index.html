@@ -203,13 +203,26 @@
 
   .glow-blue {
     position: absolute;
-    top: -100px;
-    left: -100px;
-    width: 450px;
-    height: 450px;
-    background: radial-gradient(circle, rgba(0, 217, 255, 0.06) 0%, rgba(0, 217, 255, 0) 70%);
+    top: 10%;
+    right: -150px;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(0, 217, 255, 0.07) 0%, rgba(0, 217, 255, 0) 70%);
     z-index: 0;
     pointer-events: none;
+  }
+
+  .hero-bg-curves {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;
+  }
+  .hero-bg-curves svg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
 
   .hero-grid{
@@ -219,7 +232,7 @@
     z-index: 1;
   }
   @media(min-width:900px){
-    .hero-grid{ grid-template-columns: 1.15fr 0.85fr; align-items:center; gap: 56px; }
+    .hero-grid{ grid-template-columns: 45fr 55fr; align-items:center; gap: 56px; }
   }
 
   .hero h1{
@@ -333,13 +346,21 @@
     justify-content:center;
     align-items: center;
     padding: 20px 0;
+    margin-bottom: -50px; /* Overlap below the fold */
+    z-index: 5;
   }
+  @media(min-width:900px) {
+    .phone-stage {
+      margin-bottom: -90px; /* deeper overlap on desktop */
+    }
+  }
+
   .phone-stage::before {
     content: '';
     position: absolute;
-    width: 380px;
-    height: 380px;
-    background: radial-gradient(circle, rgba(255, 208, 0, 0.16) 0%, rgba(255, 208, 0, 0) 70%);
+    width: 450px;
+    height: 450px;
+    background: radial-gradient(circle, rgba(255, 208, 0, 0.18) 0%, rgba(255, 208, 0, 0) 70%);
     z-index: 1;
     pointer-events: none;
     top: 50%;
@@ -348,23 +369,23 @@
   }
 
   .phone{
-    width: 240px;
+    width: 250px; /* larger base width */
     aspect-ratio: 9/18.5;
     border-radius: 40px;
     background: #090909;
     padding: 8px;
     box-shadow: 
-      0 25px 50px -12px rgba(17, 17, 17, 0.25),
-      0 12px 24px -16px rgba(17, 17, 17, 0.2),
+      0 10px 20px rgba(0,0,0,0.04),
+      0 30px 60px rgba(0,0,0,0.12),
       inset 0 0 2px 1px rgba(255, 255, 255, 0.15);
     border: 3px solid #222222;
     position:relative;
-    transform: rotate(11deg) translateY(20px);
+    transform: rotate(10deg) translateY(20px);
     z-index: 2;
     transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   }
   .phone:hover {
-    transform: rotate(11deg) translateY(12px) scale(1.02);
+    transform: rotate(10deg) translateY(12px) scale(1.02);
   }
   .phone::after {
     content: '';
@@ -379,7 +400,7 @@
     z-index: 10;
   }
 
-  @media(min-width:560px){ .phone{ width:270px; } }
+  @media(min-width:560px){ .phone{ width:290px; } }
   .phone-screen{
     width:100%; height:100%;
     border-radius: 32px;
@@ -880,6 +901,12 @@
 
 <section class="hero">
   <div class="glow-blue"></div>
+  <div class="hero-bg-curves">
+    <svg viewBox="0 0 1440 800" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M-100,250 C300,120 600,450 1000,280 C1200,180 1400,380 1600,320" stroke="rgba(17,17,17,0.03)" stroke-width="1.5"/>
+      <path d="M-50,400 C400,220 700,600 1100,380 C1300,260 1500,480 1700,400" stroke="rgba(17,17,17,0.02)" stroke-width="1.5"/>
+    </svg>
+  </div>
   <div class="wrap hero-grid">
     <div>
       <div class="hero-badge fade-up">
