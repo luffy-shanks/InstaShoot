@@ -19,7 +19,6 @@
     --signal:#FFD000; /* Yellow Accent */
     --accent-yellow:#FFD000;
     --accent-blue:#00D9FF;
-    --accent-green:#10B981;
 
     --display: 'Inter Tight', sans-serif;
     --mono: 'JetBrains Mono', monospace;
@@ -110,12 +109,19 @@
     border-radius: 999px;
     border: 1px solid transparent;
     cursor:pointer;
-    transition: transform .2s cubic-bezier(0.16, 1, 0.3, 1), background .2s ease, color .2s ease, border-color .2s ease, box-shadow .2s ease;
+    transition: transform .25s cubic-bezier(0.16, 1, 0.3, 1), background .2s ease, color .2s ease, border-color .2s ease, box-shadow .2s ease;
     white-space:nowrap;
   }
   .btn:hover{ transform: translateY(-2px); }
-  .btn-primary{ background: var(--accent-yellow); color: var(--ink); box-shadow: 0 4px 12px rgba(255,208,0,0.12); }
-  .btn-primary:hover{ background: #F2C600; box-shadow: 0 6px 18px rgba(255,208,0,0.2); }
+  .btn-primary{ background: var(--accent-yellow); color: var(--ink); box-shadow: 0 4px 14px rgba(255,208,0,0.2); border-radius: 999px; }
+  .btn-primary:hover{ background: #F2C600; box-shadow: 0 8px 24px rgba(255,208,0,0.4); transform: translateY(-3.5px); }
+  .btn-primary:hover .lightning-icon { animation: lightning-strike 0.5s ease-in-out; }
+  @keyframes lightning-strike {
+    0% { transform: scale(1); }
+    30% { transform: scale(1.3) rotate(-15deg); filter: drop-shadow(0 0 4px var(--accent-yellow)); }
+    70% { transform: scale(0.9) rotate(10deg); }
+    100% { transform: scale(1); }
+  }
   .btn-secondary{ background: var(--white); color: var(--ink); border: 1px solid var(--stone-line); box-shadow: 0 2px 8px rgba(0,0,0,0.02); }
   .btn-secondary:hover{ border-color: rgba(0,0,0,0.15); background: #FAF9F6; box-shadow: 0 4px 12px rgba(0,0,0,0.04); }
   .btn-ghost{ background: transparent; color: var(--ink); border-color: var(--stone-line); }
@@ -139,7 +145,12 @@
   }
   .nav{
     display:flex; align-items:center; justify-content:space-between;
-    height: 80px;
+    height: 70px;
+  }
+  @media(max-width: 560px){
+    .nav {
+      height: 60px;
+    }
   }
   .logo{
     font-weight: 800;
@@ -148,10 +159,15 @@
     display:flex; align-items:center; gap:8px;
   }
   .logo img {
-    height: 48px;
-    width: auto;
+    width: 144px;
+    height: auto;
     display: block;
     transition: opacity 0.2s ease;
+  }
+  @media(max-width: 560px){
+    .logo img {
+      width: 120px;
+    }
   }
   .logo img:hover {
     opacity: 0.85;
@@ -193,13 +209,22 @@
 
   /* =================== HERO =================== */
   .hero{
-    padding: 40px 0 0;
+    padding: 15px 0 0;
     position:relative;
-    background-image: radial-gradient(rgba(17, 17, 17, 0.04) 1px, transparent 1px);
+    background-image: radial-gradient(rgba(17, 17, 17, 0.03) 1px, transparent 1px);
     background-size: 24px 24px;
     background-position: center top;
   }
-  @media(min-width:900px){ .hero{ padding: 80px 0 0; } }
+  @media(min-width:900px){
+    .hero{
+      min-height: calc(100vh - 70px);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 2vh 0 0;
+      box-sizing: border-box;
+    }
+  }
 
   .hero-bg-canvas {
     position: absolute;
@@ -209,14 +234,26 @@
     z-index: 0;
   }
 
+  @keyframes glowPulseYellow {
+    0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.12; }
+    50% { transform: translate(-50%, -50%) scale(1.1); opacity: 0.14; }
+  }
+  @keyframes glowPulseBlue {
+    0%, 100% { transform: scale(1); opacity: 0.08; }
+    50% { transform: scale(1.08); opacity: 0.10; }
+  }
   .glow-blue {
     position: absolute;
-    top: 10%;
-    right: -150px;
-    width: 500px;
-    height: 500px;
-    background: radial-gradient(circle, rgba(0, 217, 255, 0.07) 0%, rgba(0, 217, 255, 0) 70%);
+    top: 5%;
+    left: calc(50% - 550px);
+    width: 550px;
+    height: 550px;
+    background: rgba(0, 217, 255, 1);
+    filter: blur(200px);
+    border-radius: 50%;
     pointer-events: none;
+    z-index: 0;
+    animation: glowPulseBlue 10s ease-in-out infinite;
   }
 
   .hero-bg-curves {
@@ -237,7 +274,12 @@
     z-index: 1;
   }
   @media(min-width:900px){
-    .hero-grid{ grid-template-columns: 45fr 55fr; align-items:center; gap: 56px; }
+    .hero-grid{
+      grid-template-columns: 45fr 55fr;
+      align-items: center;
+      gap: 76px;
+      flex: 1;
+    }
   }
 
   .hero h1{
@@ -248,23 +290,15 @@
     margin: 0 0 12px;
     color: var(--ink);
   }
-  @media(min-width:560px){ .hero h1{ font-size: 52px; margin-bottom: 16px; } }
-  @media(min-width:900px){ .hero h1{ font-size: 70px; margin-bottom: 20px; } }
+  @media(min-width:560px){ .hero h1{ font-size: 46px; margin-bottom: 16px; } }
+  @media(min-width:900px){ .hero h1{ font-size: min(54px, 4.5vw); margin-bottom: min(20px, 2.2vh); } }
 
   .changing-word {
     color: var(--accent-yellow);
     display: inline-block;
-    transition: opacity 0.2s ease, transform 0.2s ease;
+    transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1), transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
     transform: translateY(0);
     opacity: 1;
-  }
-  .changing-word.slide-out {
-    opacity: 0;
-    transform: translateY(-8px);
-  }
-  .changing-word.slide-in {
-    opacity: 0;
-    transform: translateY(8px);
   }
 
   .hero-badge {
@@ -280,10 +314,11 @@
     font-weight: 600;
     letter-spacing: 0.05em;
     color: var(--ink);
-    margin-bottom: 16px;
+    margin-bottom: 12px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.02);
   }
-  @media(min-width:560px){ .hero-badge{ margin-bottom: 24px; } }
+  @media(min-width:560px){ .hero-badge{ margin-bottom: 16px; } }
+  @media(min-width:900px){ .hero-badge{ margin-bottom: min(16px, 1.8vh); } }
   .badge-dot {
     width: 6px;
     height: 6px;
@@ -299,40 +334,48 @@
   }
 
   .hero p.lead{
-    font-size: 15.5px;
+    font-size: 14.5px;
     color: var(--ink-soft);
     max-width: 480px;
-    line-height:1.55;
-    margin-bottom: 24px;
+    line-height:1.5;
+    margin-bottom: 16px;
   }
-  @media(min-width:560px){ .hero p.lead{ font-size: 16px; margin-bottom: 32px; } }
+  @media(min-width:560px){ .hero p.lead{ font-size: 15px; margin-bottom: 20px; } }
+  @media(min-width:900px){ .hero p.lead{ font-size: 15.5px; margin-bottom: min(24px, 2.8vh); } }
 
-  .hero-ctas{ display:flex; flex-wrap:wrap; gap:14px; margin-bottom: 24px; }
-  @media(min-width:560px){ .hero-ctas{ margin-bottom: 36px; } }
+  .hero-ctas{ display:flex; flex-wrap:wrap; gap:12px; margin-bottom: 16px; }
+  @media(min-width:560px){ .hero-ctas{ margin-bottom: 24px; } }
+  @media(min-width:900px){ .hero-ctas{ margin-bottom: min(24px, 2.8vh); } }
 
   .hero-features {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 12px;
-    margin-top: 36px;
+    margin-top: 24px;
   }
+  @media(min-width:900px){ .hero-features { margin-top: min(24px, 2.8vh); } }
   .feature-card {
     background: var(--white);
-    border: 1px solid rgba(0,0,0,0.05);
-    border-radius: 16px;
-    padding: 14px 18px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.015), 0 1px 3px rgba(0,0,0,0.01);
+    border: 1px solid rgba(0,0,0,0.02);
+    border-radius: 24px;
+    padding: 16px 18px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.04);
     display: flex;
     flex-direction: column;
     gap: 4px;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease;
+  }
+  @media(min-width:900px){
+    .feature-card {
+      padding: 32px;
+    }
   }
   .feature-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 30px rgba(0,0,0,0.035);
+    transform: translateY(-4px);
+    box-shadow: 0 30px 70px rgba(0,0,0,0.08);
   }
   .feature-card .feature-icon {
-    font-size: 18px;
+    font-size: 26px;
     margin-bottom: 2px;
   }
   .feature-card .feature-val {
@@ -378,31 +421,40 @@
     display:flex;
     justify-content:center;
     align-items: center;
-    padding: 20px 0;
-    margin-bottom: -50px; /* Overlap below the fold */
+    padding: 10px 0; /* Reduced padding to lift the phone section */
+    margin-bottom: 0px; /* Total phone visible in hero, no overlap */
     z-index: 5;
   }
   @media(min-width:900px) {
     .phone-stage {
-      margin-bottom: -90px; /* deeper overlap on desktop */
+      margin-bottom: 0px; /* Total phone visible in hero, no overlap */
+      transform: translateY(-50px);
     }
   }
 
   .phone-stage::before {
     content: '';
     position: absolute;
-    width: 450px;
-    height: 450px;
-    background: radial-gradient(circle, rgba(255, 208, 0, 0.18) 0%, rgba(255, 208, 0, 0) 70%);
+    width: 400px;
+    height: 400px;
+    background: rgba(255, 208, 0, 1);
+    filter: blur(200px);
+    border-radius: 50%;
     z-index: 1;
     pointer-events: none;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+    animation: glowPulseYellow 8s ease-in-out infinite;
+  }
+
+  @keyframes phoneFloat {
+    0%, 100% { transform: rotate(8deg) translateY(0); }
+    50% { transform: rotate(8deg) translateY(-8px); }
   }
 
   .phone{
-    width: 250px; /* larger base width */
+    width: 200px; /* base width */
     aspect-ratio: 9/18.5;
     border-radius: 40px;
     background: #090909;
@@ -413,12 +465,19 @@
       inset 0 0 2px 1px rgba(255, 255, 255, 0.15);
     border: 3px solid #222222;
     position:relative;
-    transform: rotate(10deg) translateY(20px);
+    transform: rotate(8deg); 
     z-index: 2;
     transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    animation: phoneFloat 6s ease-in-out infinite;
+  }
+  @media(min-width:900px){
+    .phone{
+      width: min(208px, 23.5vh); /* Scale based on screen height to prevent vertical scrolling */
+    }
   }
   .phone:hover {
-    transform: rotate(10deg) translateY(12px) scale(1.02);
+    animation-play-state: paused;
+    transform: rotate(8deg) scale(1.03); 
   }
   .phone::after {
     content: '';
@@ -434,12 +493,145 @@
   }
 
   @media(min-width:560px){ .phone{ width:290px; } }
+
   .phone-screen{
     width:100%; height:100%;
     border-radius: 32px;
     background: #161412;
     position:relative;
     overflow:hidden;
+  }
+
+  .phone-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+    pointer-events: none;
+  }
+
+  /* simulated Instagram Reels UI */
+  .reel-instagram-ui {
+    position: absolute;
+    inset: 0;
+    z-index: 4;
+    pointer-events: none;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 16px 10px 48px;
+    background: linear-gradient(to top, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0) 40%, rgba(0,0,0,0) 85%, rgba(0,0,0,0.2) 100%);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: #ffffff;
+  }
+  .insta-bottom {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    max-width: 80%;
+  }
+  .insta-user {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .insta-avatar {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 1px solid #fff;
+    object-fit: cover;
+  }
+  .insta-handle {
+    font-size: 11px;
+    font-weight: 600;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+  }
+  .insta-badge {
+    background: #00D9FF; /* Accent Blue checkmark */
+    color: #fff;
+    font-size: 7px;
+    font-weight: 800;
+    padding: 1px 4px;
+    border-radius: 3px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .insta-caption {
+    font-size: 10px;
+    font-weight: 400;
+    line-height: 1.3;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+  }
+  .insta-music {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 9px;
+    opacity: 0.9;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+  }
+  .music-text-wrap {
+    overflow: hidden;
+    white-space: nowrap;
+    width: 100px;
+  }
+  .music-text {
+    display: inline-block;
+    animation: scrollMusic 6s linear infinite;
+  }
+  @keyframes scrollMusic {
+    0% { transform: translateX(0%); }
+    100% { transform: translateX(-50%); }
+  }
+  .insta-actions {
+    position: absolute;
+    right: 8px;
+    bottom: 48px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+  .insta-action {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+  }
+  .insta-action svg {
+    width: 20px;
+    height: 20px;
+    fill: currentColor;
+    filter: drop-shadow(0 1px 2px rgba(0,0,0,0.5));
+  }
+  .insta-action span {
+    font-size: 9px;
+    font-weight: 500;
+  }
+  .insta-audio-disc {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #222;
+    border: 3px solid #fff;
+    animation: rotateDisc 3s linear infinite;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+  .insta-audio-disc img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  @keyframes rotateDisc {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
   }
 
   /* progress bar like Stories/Reels */
@@ -510,56 +702,31 @@
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    background: rgba(255, 255, 255, 0.75);
-    backdrop-filter: blur(12px);
+    background: rgba(255, 255, 255, 0.72); /* Translucent white background */
+    backdrop-filter: blur(12px); /* Glassmorphic blur */
     -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.4);
-    padding: 8px 14px;
-    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    padding: 6px 14px;
+    border-radius: 18px; /* Upgraded to 18px radius */
     font-family: var(--mono);
-    font-size: 10px;
+    font-size: 11px;
     font-weight: 700;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.03em;
     color: var(--ink);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04), 0 2px 6px rgba(0, 0, 0, 0.02);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.03), 0 1px 3px rgba(0, 0, 0, 0.01); /* Soft shadow */
     pointer-events: none;
     transition: transform 0.3s ease;
   }
-  .tag-dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-  }
-  .yellow-dot {
-    background: var(--accent-yellow);
-    box-shadow: 0 0 0 0 rgba(255, 208, 0, 0.4);
-    animation: dot-pulse-yellow 2s infinite;
-  }
-  .green-dot {
-    background: var(--accent-green);
-    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4);
-    animation: dot-pulse-green 2s infinite;
-  }
-  @keyframes dot-pulse-yellow {
-    0% { box-shadow: 0 0 0 0 rgba(255, 208, 0, 0.45); }
-    70% { box-shadow: 0 0 0 6px rgba(255, 208, 0, 0); }
-    100% { box-shadow: 0 0 0 0 rgba(255, 208, 0, 0); }
-  }
-  @keyframes dot-pulse-green {
-    0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.45); }
-    70% { box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
-    100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
-  }
 
   .live-tag {
-    top: 20%;
-    left: -15px;
+    top: 25%;
+    left: -10px; /* Positioned close to phone edge */
     transform: rotate(-6deg);
     animation: float-live 6s ease-in-out infinite;
   }
   .delivered-tag {
-    bottom: 15%;
-    right: -15px;
+    bottom: 20%;
+    right: -10px; /* Positioned close to phone edge */
     transform: rotate(4deg);
     animation: float-delivered 6s ease-in-out infinite;
   }
@@ -585,9 +752,15 @@
     border-top: 1px solid var(--stone-line);
     border-bottom: 1px solid var(--stone-line);
     background: #FAF8F5;
-    padding: 28px 0;
-    margin-top: 64px;
+    padding: 20px 0;
+    margin-top: 32px;
     overflow: hidden;
+  }
+  @media(min-width:900px){
+    .trust-categories-section {
+      margin-top: auto;
+      padding: 16px 0;
+    }
   }
   .trust-categories-container {
     display: flex;
@@ -617,6 +790,12 @@
     cursor: pointer;
     transition: transform 0.2s ease;
   }
+  @media(min-width:900px){
+    .trust-cat-item {
+      gap: 6px;
+      min-width: 72px;
+    }
+  }
   .trust-cat-item:hover {
     transform: translateY(-2px);
   }
@@ -633,6 +812,13 @@
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02), 0 1px 3px rgba(0, 0, 0, 0.01);
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
   }
+  @media(min-width:900px){
+    .trust-cat-circle {
+      width: 46px;
+      height: 46px;
+      font-size: 17px;
+    }
+  }
   .trust-cat-item:hover .trust-cat-circle {
     border-color: rgba(0, 0, 0, 0.15);
     box-shadow: 0 6px 18px rgba(0, 0, 0, 0.04);
@@ -643,6 +829,11 @@
     color: var(--ink-soft);
     text-align: center;
     white-space: nowrap;
+  }
+  @media(min-width:900px){
+    .trust-cat-label {
+      font-size: 11px;
+    }
   }
 
   /* ---------- shared section heading ---------- */
@@ -902,13 +1093,56 @@
     color: #807A71;
     font-family: var(--mono);
   }
+
+  /* Category pills */
+  .category-pills {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: min(20px, 2.2vh);
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--stone);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-family: var(--mono);
+  }
+  .category-pills .pill {
+    padding: 4px 10px;
+    border-radius: 999px;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    cursor: pointer;
+    background: transparent;
+    color: var(--ink-soft);
+  }
+  .category-pills .pill.active {
+    background: var(--accent-yellow);
+    color: var(--ink);
+    box-shadow: 0 4px 12px rgba(255, 208, 0, 0.25);
+  }
+  .category-pills .pill-dot {
+    color: var(--stone-line);
+    font-size: 10px;
+  }
+
+  /* Unified premium scroll reveals */
+  .occ-card, .proc-step, .price-card, .testi-card, .reel-card {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1), transform 0.85s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s ease !important;
+  }
+  .in-view {
+    opacity: 1 !important;
+    transform: none !important;
+  }
 </style>
 </head>
 <body>
 
 <header>
   <div class="wrap nav">
-    <a href="#" class="logo"><img src="assets/logo.png" alt="InstaShoot Logo" style="height: 58px; width: auto; display: block;"></a>
+    <a href="#" class="logo"><img src="assets/logo.png" alt="InstaShoot Logo"></a>
     <nav class="nav-links">
       <a href="#work">Work</a>
       <a href="#occasions">Occasions</a>
@@ -938,8 +1172,12 @@
     <div class="glow-blue"></div>
     <div class="hero-bg-curves">
       <svg viewBox="0 0 1440 800" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
-        <path d="M-100,250 C300,120 600,450 1000,280 C1200,180 1400,380 1600,320" stroke="rgba(17,17,17,0.03)" stroke-width="1.5"/>
-        <path d="M-50,400 C400,220 700,600 1100,380 C1300,260 1500,480 1700,400" stroke="rgba(17,17,17,0.02)" stroke-width="1.5"/>
+        <path d="M-100,150 C250,50 550,300 950,180 C1150,120 1350,280 1600,220" stroke="rgba(17,17,17,0.03)" stroke-width="1.2"/>
+        <path d="M-100,250 C300,120 600,450 1000,280 C1200,180 1400,380 1600,320" stroke="rgba(17,17,17,0.03)" stroke-width="1.2"/>
+        <path d="M-100,350 C350,200 650,550 1050,350 C1250,240 1450,450 1600,400" stroke="rgba(17,17,17,0.03)" stroke-width="1.2"/>
+        <path d="M-50,450 C400,280 700,650 1100,420 C1300,300 1500,520 1700,480" stroke="rgba(17,17,17,0.02)" stroke-width="1.2"/>
+        <path d="M-50,550 C450,350 750,750 1150,500 C1350,360 1550,600 1700,560" stroke="rgba(17,17,17,0.02)" stroke-width="1.2"/>
+        <path d="M-50,650 C500,420 800,850 1200,580 C1400,420 1600,680 1700,640" stroke="rgba(17,17,17,0.015)" stroke-width="1.2"/>
       </svg>
     </div>
   </div>
@@ -950,20 +1188,32 @@
         <span class="badge-text">SHOT TODAY. DELIVERED TONIGHT.</span>
       </div>
       <h1 class="fade-up" style="animation-delay:.05s">
-        Reels for every <span id="changing-word" class="changing-word">Wedding</span>
+        <span style="white-space: nowrap;">Reels for every</span><br>
+        <span id="changing-word" class="changing-word">Wedding</span>
       </h1>
+      <div class="category-pills fade-up" style="animation-delay:.08s" id="categoryPills">
+        <span class="pill" data-word="Wedding">Wedding</span>
+        <span class="pill-dot">•</span>
+        <span class="pill" data-word="Car Delivery">Car Delivery</span>
+        <span class="pill-dot">•</span>
+        <span class="pill" data-word="Birthday">Birthday</span>
+        <span class="pill-dot">•</span>
+        <span class="pill" data-word="Store Launch">Launch</span>
+        <span class="pill-dot">•</span>
+        <span class="pill" data-word="Engagement">Engagement</span>
+      </div>
       <p class="lead fade-up" style="animation-delay:.1s">
         Professional cinematic reels delivered in minutes. Perfect for weddings, birthdays, car deliveries, business launches, engagements and every unforgettable moment. Ready to share instantly on Instagram Reels and YouTube Shorts.
       </p>
       <div class="hero-ctas fade-up" style="animation-delay:.15s">
         <a href="#book" class="btn btn-primary">
           Book a Shoot
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block; vertical-align: middle;">
+          <svg class="lightning-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block; vertical-align: middle; margin-left: 4px;">
             <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
           </svg>
         </a>
         <a href="#work" class="btn btn-secondary">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" style="display: inline-block; vertical-align: middle; margin-right: 2px;">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" style="display: inline-block; vertical-align: middle; margin-right: 4px;">
             <polygon points="5 3 19 12 5 21 5 3"></polygon>
           </svg>
           See the Reels
@@ -982,15 +1232,14 @@
         </div>
         <div class="feature-card">
           <span class="feature-icon">📱</span>
-          <span class="feature-val">100%</span>
-          <span class="feature-lbl">Social Ready</span>
+          <span class="feature-val">Social Ready</span>
+          <span class="feature-lbl">Instagram &amp; Shorts</span>
         </div>
       </div>
     </div>
     <div class="phone-stage fade-up" style="animation-delay:.1s">
       <div class="floating-tag live-tag">
-        <span class="tag-dot yellow-dot"></span>
-        LIVE EDIT
+        🟡 Live Editing
       </div>
       <div class="phone">
         <div class="phone-screen">
@@ -1008,6 +1257,43 @@
             <div class="reel-slide s4"><span class="motion-el" style="width:130px;height:130px;top:25%;left:20%;"></span></div>
             <div class="reel-slide s5"><span class="motion-el" style="width:125px;height:125px;top:18%;left:35%;"></span></div>
           </div>
+          <!-- Simulated Instagram Reels UI -->
+          <div class="reel-instagram-ui">
+            <div class="insta-bottom">
+              <div class="insta-user">
+                <img class="insta-avatar" src="assets/logo.png" alt="InstaShoot Logo">
+                <span class="insta-handle">instashootstudio</span>
+                <span class="insta-badge">Verified</span>
+              </div>
+              <p class="insta-caption" id="instaCaption">Groom entry, cut in 40 mins! 💍</p>
+              <div class="insta-music">
+                <span class="music-icon">🎵</span>
+                <div class="music-text-wrap">
+                  <div class="music-text">Original Audio • instashootstudio &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Original Audio • instashootstudio &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+                </div>
+              </div>
+            </div>
+            <div class="insta-actions">
+              <div class="insta-action">
+                <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                <span>1,248</span>
+              </div>
+              <div class="insta-action">
+                <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
+                <span>48</span>
+              </div>
+              <div class="insta-action">
+                <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+                <span>Share</span>
+              </div>
+              <div class="insta-action">
+                <svg viewBox="0 0 24 24"><path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>
+              </div>
+              <div class="insta-audio-disc">
+                <img src="assets/logo.png" alt="Audio Disc">
+              </div>
+            </div>
+          </div>
           <div class="phone-cap">
             <div class="occasion" id="capOccasion">Reel — Car Delivery</div>
             <div class="turn" id="capTurn">shot 11:40am → delivered 3:05pm</div>
@@ -1015,8 +1301,7 @@
         </div>
       </div>
       <div class="floating-tag delivered-tag">
-        <span class="tag-dot green-dot"></span>
-        Reel Delivered
+        🟢 Reel Delivered
       </div>
     </div>
   </div>
@@ -1270,7 +1555,7 @@
 <footer>
   <div class="wrap foot-grid">
     <div>
-      <a href="#" class="logo"><img src="assets/logo.png" alt="InstaShoot Logo" style="height: 58px; width: auto; display: block;"></a>
+      <a href="#" class="logo"><img src="assets/logo.png" alt="InstaShoot Logo"></a>
       <p class="foot-tag">Reels, shot and delivered fast — for every occasion.</p>
     </div>
     <div class="foot-links">
@@ -1307,17 +1592,18 @@
 
   // hero "live edit" cycling reel
   const heroSlides = [
-    { occasion: 'Reel — Groom Entry', turn: 'shot 11:40am → delivered 3:05pm' },
-    { occasion: 'Reel — Wedding Highlight', turn: 'shot 9:00am → delivered 4:20pm' },
-    { occasion: 'Reel', turn: 'shot 5:30pm → delivered 9:15pm' },
-    { occasion: 'Reel — Store Launch', turn: 'shot 10:00am → delivered 1:45pm' },
-    { occasion: 'Reel — Housewarming', turn: 'shot 6:00pm → delivered 9:30pm' },
+    { occasion: 'Reel — Groom Entry', turn: 'shot 11:40am → delivered 3:05pm', caption: 'Groom entry, cut in 40 mins! 💍' },
+    { occasion: 'Reel — Wedding Highlight', turn: 'shot 9:00am → delivered 4:20pm', caption: 'Wedding highlights posted same-day! ✨' },
+    { occasion: 'Reel', turn: 'shot 5:30pm → delivered 9:15pm', caption: 'Traditional ceremony highlights! ⚡' },
+    { occasion: 'Reel — Store Launch', turn: 'shot 10:00am → delivered 1:45pm', caption: 'Store launch reels posted live! 🛍️' },
+    { occasion: 'Reel — Housewarming', turn: 'shot 6:00pm → delivered 9:30pm', caption: 'New home warm memories delivered tonight! 🏠' },
   ];
   const SLIDE_MS = 4000;
   const slideEls = document.querySelectorAll('#reelSlides .reel-slide');
   const progressWrap = document.getElementById('reelProgress');
   const capOccasion = document.getElementById('capOccasion');
   const capTurn = document.getElementById('capTurn');
+  const instaCaptionEl = document.getElementById('instaCaption');
   let heroIdx = 0;
 
   function buildProgressSegs(){
@@ -1348,9 +1634,16 @@
     });
     capOccasion.style.opacity = 0;
     capTurn.style.opacity = 0;
+    if (instaCaptionEl) {
+      instaCaptionEl.style.opacity = 0;
+    }
     setTimeout(() => {
       capOccasion.textContent = heroSlides[i].occasion;
       capTurn.textContent = heroSlides[i].turn;
+      if (instaCaptionEl) {
+        instaCaptionEl.textContent = heroSlides[i].caption;
+        instaCaptionEl.style.opacity = 1;
+      }
       capOccasion.style.opacity = 1;
       capTurn.style.opacity = 1;
     }, 180);
@@ -1362,23 +1655,90 @@
   }, SLIDE_MS);
 
   // headline rotating words
-  const rotatingWords = ['Wedding', 'Birthday', 'Car Delivery', 'Store Launch', 'Engagement', 'Travel', 'Business'];
-  let rotatingWordIdx = 0;
+  const rotatingWords = ['Wedding', 'Car Delivery', 'Birthday', 'Store Launch', 'Engagement'];
   const changingWordEl = document.getElementById('changing-word');
+  let currentWordIdx = 0;
 
-  function rotateHeadlineWord() {
-    if (!changingWordEl) return;
-    changingWordEl.classList.add('slide-out');
-    setTimeout(() => {
-      rotatingWordIdx = (rotatingWordIdx + 1) % rotatingWords.length;
-      changingWordEl.textContent = rotatingWords[rotatingWordIdx];
-      changingWordEl.classList.remove('slide-out');
-      changingWordEl.classList.add('slide-in');
-      changingWordEl.offsetWidth; // trigger reflow
-      changingWordEl.classList.remove('slide-in');
-    }, 200);
+  function updateActivePill(word) {
+    const pills = document.querySelectorAll('.category-pills .pill');
+    pills.forEach(pill => {
+      const dataWord = pill.getAttribute('data-word');
+      if (dataWord === word || (dataWord === 'Store Launch' && word === 'Store Launch') || (dataWord === 'Launch' && word === 'Store Launch')) {
+        pill.classList.add('active');
+      } else {
+        pill.classList.remove('active');
+      }
+    });
   }
-  setInterval(rotateHeadlineWord, 3000);
+
+  function rotateWord() {
+    if (!changingWordEl) return;
+    
+    // Slide out and fade active word
+    changingWordEl.style.opacity = '0';
+    changingWordEl.style.transform = 'translateY(-12px)';
+    
+    setTimeout(() => {
+      currentWordIdx = (currentWordIdx + 1) % rotatingWords.length;
+      const nextWord = rotatingWords[currentWordIdx];
+      changingWordEl.textContent = nextWord;
+      
+      // Update active pill highlight
+      updateActivePill(nextWord);
+      
+      // Prepare next word starting position (slide from below)
+      changingWordEl.style.transform = 'translateY(12px)';
+      
+      // Trigger layout reflow
+      changingWordEl.offsetHeight;
+      
+      // Slide in and fade in
+      changingWordEl.style.opacity = '1';
+      changingWordEl.style.transform = 'translateY(0)';
+    }, 350);
+  }
+
+  // Initialize active pill
+  updateActivePill(rotatingWords[0]);
+
+  // Set interval for word rotation
+  if (window.wordRotationInterval) {
+    clearInterval(window.wordRotationInterval);
+  }
+  window.wordRotationInterval = setInterval(rotateWord, 3200);
+
+  // Click category pills to navigate immediately
+  document.querySelectorAll('.category-pills .pill').forEach(pill => {
+    pill.addEventListener('click', () => {
+      const targetWord = pill.getAttribute('data-word');
+      const idx = rotatingWords.indexOf(targetWord === 'Launch' ? 'Store Launch' : targetWord);
+      if (idx !== -1 && idx !== currentWordIdx) {
+        // Reset the rotation interval
+        if (window.wordRotationInterval) {
+          clearInterval(window.wordRotationInterval);
+        }
+        
+        // Slide out current
+        changingWordEl.style.opacity = '0';
+        changingWordEl.style.transform = 'translateY(-12px)';
+        
+        setTimeout(() => {
+          currentWordIdx = idx;
+          const nextWord = rotatingWords[currentWordIdx];
+          changingWordEl.textContent = nextWord;
+          updateActivePill(nextWord);
+          
+          changingWordEl.style.transform = 'translateY(12px)';
+          changingWordEl.offsetHeight;
+          changingWordEl.style.opacity = '1';
+          changingWordEl.style.transform = 'translateY(0)';
+          
+          // Restart interval
+          window.wordRotationInterval = setInterval(rotateWord, 3200);
+        }, 350);
+      }
+    });
+  });
 
   // reel strip placeholders (swap with real thumbnails when uploaded)
   const reels = [
