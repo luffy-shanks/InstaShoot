@@ -440,6 +440,26 @@
   .hero-ctas{ display:flex; flex-wrap:wrap; gap:12px; margin-bottom: 16px; }
   @media(min-width:560px){ .hero-ctas{ margin-bottom: 24px; } }
   @media(min-width:900px){ .hero-ctas{ margin-bottom: min(24px, 2.8vh); } }
+  @media(max-width: 640px){
+    .hero-ctas {
+      display: flex;
+      flex-flow: row wrap;
+      gap: 10px;
+      width: 100%;
+    }
+    .hero-ctas .btn:nth-child(1) {
+      flex: 1 0 100%;
+      justify-content: center;
+    }
+    .hero-ctas .btn:nth-child(n+2) {
+      flex: 1;
+      justify-content: center;
+      padding: 12px 12px;
+      font-size: 13.5px;
+      border-color: rgba(255,255,255,0.16);
+      background: rgba(255,255,255,0.05);
+    }
+  }
 
   .hero-features {
     grid-area: features;
@@ -2302,13 +2322,13 @@
           </svg>
         </a>
         <a href="#work" class="btn btn-secondary">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" style="display: inline-block; vertical-align: middle; margin-right: 4px;">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" style="display: inline-block; vertical-align: middle; margin-right: 4px; color: var(--accent-blue);">
             <polygon points="5 3 19 12 5 21 5 3"></polygon>
           </svg>
           See the Reels
         </a>
         <a href="#pricing" class="btn btn-secondary">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block; vertical-align: middle; margin-right: 4px;">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block; vertical-align: middle; margin-right: 4px; color: var(--accent-yellow);">
             <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
             <line x1="7" y1="7" x2="7.01" y2="7"></line>
           </svg>
