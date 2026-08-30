@@ -1232,30 +1232,65 @@
     display: none !important;
   }
 
-  .reel-strip{
-    display:grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 14px;
+  /* Disable scroll reveal defaults for portfolio-grid and expanded-grid reels so they are instantly visible and sharp */
+  .portfolio-grid .reel-card, 
+  .expanded-grid .reel-card {
+    opacity: 1 !important;
+    filter: none !important;
+    transform: none !important;
   }
-  @media(min-width:640px){ .reel-strip{ grid-template-columns: repeat(3, 1fr); } }
-  @media(min-width:1000px){ .reel-strip{ grid-template-columns: repeat(6, 1fr); } }
 
-  .reel-card{
-    opacity:0; transform: translateY(14px);
-    transition: opacity .6s ease, transform .6s ease;
+  .portfolio-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+  @media(min-width: 640px) {
+    .portfolio-grid {
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+  }
+  @media(min-width: 1000px) {
+    .portfolio-grid {
+      grid-template-columns: repeat(5, 1fr);
+      gap: 20px;
+    }
+    /* Editorial Layout: First item spans 2 columns & 2 rows (only if there are 3 or more items to prevent grid height collapse) */
+    .portfolio-grid .reel-card:first-child:nth-last-child(n+3) {
+      grid-column: span 2;
+      grid-row: span 2;
+    }
+    .portfolio-grid .reel-card:first-child:nth-last-child(n+3) .reel-thumb {
+      aspect-ratio: auto;
+      height: 100%;
+    }
+  }
+
+  .reel-card {
+    opacity: 0;
+    transform: translateY(14px);
+    transition: opacity .6s cubic-bezier(0.16, 1, 0.3, 1), transform .6s cubic-bezier(0.16, 1, 0.3, 1);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+  .reel-card.fade-in {
+    opacity: 1;
+    transform: translateY(0);
   }
   
-  .reel-thumb{
+  .reel-thumb {
     aspect-ratio: 9/16;
     border-radius: 14px;
     background: #090807;
-    position:relative;
-    overflow:hidden;
-    cursor:pointer;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
     border: 1px solid var(--stone-line);
     transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease, box-shadow 0.3s ease;
-    transform-style: preserve-3d;
-    perspective: 800px;
+    width: 100%;
+    flex-grow: 1;
   }
   
   /* Desktop Hover Effects */
@@ -1278,26 +1313,43 @@
   }
   
   .reel-thumb video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
     transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
   }
   
-  .reel-tag{
-    position:absolute; top:10px; left:10px;
-    font-family: var(--mono); font-size:9.5px; color:#fff;
-    background: rgba(193,67,42,0.9);
-    padding: 3px 7px; border-radius:4px; letter-spacing:.03em;
+  .reel-tag {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    font-family: var(--mono);
+    font-size: 9px;
+    color: var(--ink-on-gold);
+    background: var(--accent-yellow);
+    padding: 3px 8px;
+    border-radius: 999px;
+    font-weight: 700;
+    letter-spacing: .05em;
+    text-transform: uppercase;
     z-index: 4;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
   }
   
-  .reel-play{
-    position:absolute;
-    top: 50%; left: 50%;
+  .reel-play {
+    position: absolute;
+    top: 50%;
+    left: 50%;
     transform: translate(-50%, -50%);
-    width: 42px; height: 42px;
+    width: 44px;
+    height: 44px;
     border-radius: 50%;
     background: rgba(0,0,0,0.45);
     border: 1px solid rgba(255,255,255,0.12);
-    display:flex; align-items:center; justify-content:center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     color: rgba(255,255,255,0.92);
     font-size: 14px;
     z-index: 3;
@@ -1306,18 +1358,13 @@
     transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
   }
   
-  .reel-cap{
+  .reel-cap {
     font-size: 12.5px;
     color: var(--ink-soft);
     margin-top: 10px;
-    line-height:1.4;
+    line-height: 1.4;
   }
 
-  /* Placeholder Glowing metallic drift background */
-  @keyframes placeholderDrift {
-    0%, 100% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-  }
   .placeholder-glow {
     position: absolute;
     inset: 0;
@@ -1326,40 +1373,170 @@
     animation: placeholderDrift 8s ease infinite;
     z-index: 1;
   }
+  @keyframes placeholderDrift {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+  }
 
-  /* Mobile Snap Carousel Viewport Override */
-  @media(max-width: 640px) {
-    .reel-strip {
-      display: flex !important;
-      flex-direction: row !important;
-      overflow-x: auto !important;
-      scroll-snap-type: x mandatory !important;
-      scrollbar-width: none;
-      -ms-overflow-style: none;
-      padding: 16px var(--pad) 24px;
-      margin-left: calc(-1 * var(--pad));
-      margin-right: calc(-1 * var(--pad));
+
+
+  /* View All / Expanded Portfolio Modal styling */
+  #expandedPortfolioModal {
+    position: fixed;
+    inset: 0;
+    background: #070605;
+    z-index: 950;
+    display: none;
+    flex-direction: column;
+    opacity: 0;
+    transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    overflow-y: auto;
+    padding: 80px var(--pad) 60px;
+  }
+  #expandedPortfolioModal.show {
+    opacity: 1;
+  }
+  .expanded-close-btn {
+    position: fixed;
+    top: 24px;
+    right: 24px;
+    background: rgba(0, 0, 0, 0.55);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 50%;
+    color: #fff;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    cursor: pointer;
+    z-index: 960;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), background 0.25s ease, border-color 0.25s ease;
+  }
+  .expanded-close-btn:hover {
+    transform: scale(1.08) rotate(90deg);
+    background: rgba(230,178,77,0.15);
+    border-color: var(--accent-yellow);
+    color: var(--accent-yellow);
+  }
+  .search-box-wrap {
+    max-width: 520px;
+    width: 100%;
+    margin: 0 auto 28px;
+    position: relative;
+  }
+  .search-input {
+    width: 100%;
+    padding: 14px 20px 14px 48px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--stone-line);
+    color: #fff;
+    font-size: 14px;
+    font-family: inherit;
+    transition: all 0.3s ease;
+  }
+  .search-input:focus {
+    outline: none;
+    border-color: var(--accent-yellow);
+    background: rgba(255,255,255,0.06);
+    box-shadow: 0 0 20px rgba(230,178,77,0.1);
+  }
+  .search-icon-svg {
+    position: absolute;
+    left: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 16px;
+    height: 16px;
+    fill: none;
+    stroke: var(--ink-soft);
+    stroke-width: 2.5;
+    pointer-events: none;
+  }
+  .expanded-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    max-width: 1200px;
+    width: 100%;
+    margin: 0 auto;
+  }
+  @media (min-width: 640px) {
+    .expanded-grid {
+      grid-template-columns: repeat(4, 1fr);
       gap: 16px;
     }
-    .reel-strip::-webkit-scrollbar {
-      display: none;
+  }
+  @media (min-width: 1000px) {
+    .expanded-grid {
+      grid-template-columns: repeat(5, 1fr);
+      gap: 20px;
     }
-    .reel-card {
-      flex: 0 0 220px;
-      scroll-snap-align: center;
-      transition: transform 0.4s ease, opacity 0.4s ease;
-      opacity: 1 !important;
-      transform: none !important;
-      filter: none !important;
+  }
+  
+  .load-more-btn-wrap {
+    display: flex;
+    justify-content: center;
+    margin-top: 40px;
+    width: 100%;
+  }
+
+  /* Lightbox navigation styling */
+  .modal-nav-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0, 0, 0, 0.55);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: #fff;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 1010;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .modal-nav-btn:hover {
+    background: rgba(230, 178, 77, 0.2);
+    border-color: var(--accent-yellow);
+    color: var(--accent-yellow);
+    transform: translateY(-50%) scale(1.08);
+  }
+  .modal-nav-btn.prev-btn {
+    left: 24px;
+  }
+  .modal-nav-btn.next-btn {
+    right: 24px;
+  }
+  .modal-meta {
+    margin-top: 12px;
+    pointer-events: auto;
+  }
+  @media (max-width: 768px) {
+    .modal-nav-btn {
+      top: auto;
+      bottom: 24px;
+      transform: none;
+      width: 44px;
+      height: 44px;
     }
-    .reel-thumb {
-      box-shadow: 0 10px 30px rgba(0,0,0,0.45);
-      border-color: rgba(255,255,255,0.08);
-      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
+    .modal-nav-btn:hover {
+      transform: scale(1.05);
     }
-    .reel-cap {
-      font-size: 12px;
-      margin-top: 8px;
+    .modal-nav-btn.prev-btn {
+      left: calc(50% - 70px);
+    }
+    .modal-nav-btn.next-btn {
+      right: calc(50% - 70px);
     }
   }
 
@@ -2345,24 +2522,24 @@
           <div class="reel-progress" id="reelProgress"></div>
           <div class="reel-slides" id="reelSlides">
             <div class="reel-slide s1">
-              <video src="assets/IMG_2719.MOV" loop muted playsinline preload="metadata" style="width: 100%; height: 100%; object-fit: cover; display: block;"></video>
-              <div class="reel-video-text">Groom Entry 💍</div>
+              <video src="assets/video1_compressed.mp4" loop muted playsinline preload="metadata" style="width: 100%; height: 100%; object-fit: cover; display: block;"></video>
+              <div class="reel-video-text">Wedding Highlight ✨</div>
             </div>
             <div class="reel-slide s2">
-              <video src="assets/IMG_1479.mov" loop muted playsinline preload="metadata" style="width: 100%; height: 100%; object-fit: cover; display: block;"></video>
-              <div class="reel-video-text">Wedding Highlights ✨</div>
+              <video src="assets/bridevideos_compressed.mp4" loop muted playsinline preload="metadata" style="width: 100%; height: 100%; object-fit: cover; display: block;"></video>
+              <div class="reel-video-text">Bride Showcase 👰</div>
             </div>
             <div class="reel-slide s3">
-              <video src="assets/IMG_2837.MOV" loop muted playsinline preload="metadata" style="width: 100%; height: 100%; object-fit: cover; display: block;"></video>
-              <div class="reel-video-text">Ceremony Highlights ⚡</div>
+              <video src="assets/haldi_compressed.mp4" loop muted playsinline preload="metadata" style="width: 100%; height: 100%; object-fit: cover; display: block;"></video>
+              <div class="reel-video-text">Haldi Highlights 💛</div>
             </div>
             <div class="reel-slide s4">
-              <span class="motion-el" style="width:130px;height:130px;top:25%;left:20%;"></span>
-              <div class="reel-video-text">Store Launch 🛍️</div>
+              <video src="assets/mehandi2_compressed.mp4" loop muted playsinline preload="metadata" style="width: 100%; height: 100%; object-fit: cover; display: block;"></video>
+              <div class="reel-video-text">Mehandi Highlights 🌿</div>
             </div>
             <div class="reel-slide s5">
-              <span class="motion-el" style="width:125px;height:125px;top:18%;left:35%;"></span>
-              <div class="reel-video-text">New Home 🏠</div>
+              <video src="assets/venue_compressed.mp4" loop muted playsinline preload="metadata" style="width: 100%; height: 100%; object-fit: cover; display: block;"></video>
+              <div class="reel-video-text">Wedding Venue 🏰</div>
             </div>
           </div>
           <!-- Simulated Instagram Reels UI -->
@@ -2373,7 +2550,7 @@
                 <span class="insta-handle">instashootstudio</span>
                 <span class="insta-badge">Verified</span>
               </div>
-              <p class="insta-caption" id="instaCaption">Groom entry, cut in 40 mins! 💍</p>
+              <p class="insta-caption" id="instaCaption">Wedding highlights posted same-day! ✨</p>
               <div class="insta-music">
                 <span class="music-icon">🎵</span>
                 <div class="music-text-wrap">
@@ -2529,24 +2706,33 @@
   <div class="wrap">
     <div class="work-head">
       <div>
-        <p class="eyebrow">Recent deliveries</p>
-        <h2 class="sec-title">Straight from the feed.</h2>
+        <p class="eyebrow">Our Work</p>
+        <h2 class="sec-title">Moments we've turned into memories.</h2>
       </div>
       <a href="https://www.instagram.com/instashootstudio?igsh=MTltZ2Uxbnd1ZndlaQ==" target="_blank" rel="noopener" class="btn btn-ghost work-ig">View on Instagram →</a>
     </div>
     
     <!-- Portfolio Category Filters -->
-    <div class="portfolio-filters" id="portfolioFilters">
+    <div class="portfolio-filters" id="portfolioFilters" style="overflow-x: auto; white-space: nowrap; -webkit-overflow-scrolling: touch; width: 100%; padding-bottom: 8px;">
       <span class="filter-pill active" data-filter="all">All</span>
-      <span class="filter-pill" data-filter="Wedding">Wedding</span>
-      <span class="filter-pill" data-filter="Launch">Launches</span>
-      <span class="filter-pill" data-filter="Birthday">Birthdays</span>
-      <span class="filter-pill" data-filter="Engagement">Engagement</span>
+      <span class="filter-pill" data-filter="wedding">Weddings</span>
+      <span class="filter-pill" data-filter="engagement">Engagements</span>
+      <span class="filter-pill" data-filter="delivery">Deliveries</span>
+      <span class="filter-pill" data-filter="ceremony">Ceremonies</span>
+      <span class="filter-pill" data-filter="other">Others</span>
     </div>
 
-    <div class="reel-strip" id="reelStrip">
-      <!-- reel cards injected by JS / replace with real thumbnails -->
+    <!-- Editorial Portfolio Grid -->
+    <div class="portfolio-grid" id="portfolioGrid">
+      <!-- reel cards injected dynamically by JS -->
     </div>
+
+    <!-- View All Work button -->
+    <div style="display: flex; justify-content: center; margin-top: 48px;">
+      <button class="btn btn-primary" id="viewAllWorkBtn" style="box-shadow: 0 10px 30px rgba(230,178,77,0.22);">View All Work →</button>
+    </div>
+
+
   </div>
 </section>
 
@@ -2580,35 +2766,7 @@
   </div>
 </section>
 
-<!-- =================== VIDEO COMPARISON SLIDER =================== -->
-<section id="comparison" class="comparison">
-  <div class="wrap">
-    <p class="eyebrow">Aesthetic Quality</p>
-    <h2 class="sec-title">Phone shot vs. InstaShoot.</h2>
-    <p class="sec-sub">Slide the handle to compare raw phone footage against our stabilized, same-day cinematic edits.</p>
-    
-    <div class="comparison-slider" id="comparisonSlider">
-      <!-- Before (Raw Video) -->
-      <div class="video-container before-video">
-        <video src="assets/IMG_2719.MOV" loop muted autoplay playsinline class="raw-clip"></video>
-        <span class="video-label label-before">Raw Phone Video</span>
-      </div>
-      
-      <!-- After (Edited Video) -->
-      <div class="video-container after-video" id="afterVideoContainer">
-        <video src="assets/IMG_2719.MOV" loop muted autoplay playsinline class="edited-clip"></video>
-        <span class="video-label label-after">InstaShoot Edit</span>
-      </div>
-      
-      <!-- Drag Handle -->
-      <div class="slider-handle" id="sliderHandle">
-        <div class="handle-arrow left-arrow">◀</div>
-        <div class="handle-line"></div>
-        <div class="handle-arrow right-arrow">▶</div>
-      </div>
-    </div>
-  </div>
-</section>
+
 
 <!-- =================== PRICING =================== -->
 <section id="pricing" class="pricing">
@@ -2867,7 +3025,12 @@
 
 <!-- Fullscreen Reel Modal -->
 <div id="reelModal" style="position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 1000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(10px); opacity: 0; transition: opacity 0.3s ease;">
+  <!-- Prev/Next Navigation Buttons -->
+  <button class="modal-nav-btn prev-btn" id="modalPrevBtn" aria-label="Previous video">◀</button>
+  <button class="modal-nav-btn next-btn" id="modalNextBtn" aria-label="Next video">▶</button>
+  
   <button id="closeReelBtn" aria-label="Close video" style="position: absolute; top: 24px; right: 24px; background: none; border: none; color: #fff; font-size: 38px; cursor: pointer; z-index: 1010; transition: transform 0.2s ease;">&times;</button>
+  
   <div class="modal-wrapper">
     <video id="modalVideo" src="" loop autoplay playsinline></video>
     
@@ -2886,10 +3049,51 @@
         <svg class="icon-play" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
       </div>
 
+      <!-- Video Meta Overlay (Title & Category) -->
+      <div class="modal-meta" style="margin-top: auto; padding-bottom: 12px; pointer-events: auto;">
+        <h4 id="modalVideoTitle" style="color: #fff; font-size: 15px; margin: 0; font-weight: 700; text-shadow: 0 2px 4px rgba(0,0,0,0.8);">Bride Entry</h4>
+        <span id="modalVideoCategory" style="color: var(--accent-yellow); font-size: 11px; text-transform: uppercase; font-family: var(--mono); font-weight: 700; letter-spacing: 0.05em; display: inline-block; margin-top: 4px; text-shadow: 0 1px 2px rgba(0,0,0,0.8);">Wedding</span>
+      </div>
+
       <!-- Seekable progress bar -->
       <div class="modal-progress-bar" id="modalProgressBar">
         <div class="progress-fill" id="modalProgressFill"></div>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- Expanded Portfolio Modal -->
+<div id="expandedPortfolioModal">
+  <button class="expanded-close-btn" id="expandedCloseBtn" aria-label="Close portfolio">&times;</button>
+  <div class="wrap" style="max-width: 1200px; width: 100%; margin: 0 auto; display: flex; flex-direction: column;">
+    <h2 class="sec-title" style="text-align: center; margin-bottom: 8px;">Complete Portfolio</h2>
+    <p class="sec-sub" style="text-align: center; margin-bottom: 8px;">Browse all our cinematic reels</p>
+    <p class="quality-note" style="text-align: center; color: var(--ink-soft); font-size: 11px; font-family: var(--mono); margin-bottom: 32px; letter-spacing: 0.02em; text-transform: uppercase;">
+      ⚠️ Note: These previews are highly compressed for speed. Delivered reels are in full high quality.
+    </p>
+    
+    <div class="search-box-wrap">
+      <svg class="search-icon-svg" viewBox="0 0 24 24">
+        <circle cx="11" cy="11" r="8"></circle>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+      </svg>
+      <input type="text" class="search-input" id="portfolioSearchInput" placeholder="Search by title, category, or keyword...">
+    </div>
+
+    <div class="portfolio-filters" id="expandedPortfolioFilters" style="justify-content: center; margin-bottom: 36px; overflow-x: auto; white-space: nowrap; -webkit-overflow-scrolling: touch; width: 100%;">
+      <span class="filter-pill active" data-filter="all">All</span>
+      <span class="filter-pill" data-filter="wedding">Weddings</span>
+      <span class="filter-pill" data-filter="engagement">Engagements</span>
+      <span class="filter-pill" data-filter="delivery">Deliveries</span>
+      <span class="filter-pill" data-filter="ceremony">Ceremonies</span>
+      <span class="filter-pill" data-filter="other">Others</span>
+    </div>
+
+    <div class="expanded-grid" id="expandedPortfolioGrid"></div>
+
+    <div class="load-more-btn-wrap">
+      <button class="btn btn-secondary" id="loadMoreBtn" style="display: none;">Load More</button>
     </div>
   </div>
 </div>
@@ -3017,11 +3221,11 @@
 
   // hero "live edit" cycling reel
   const heroSlides = [
-    { occasion: 'Reel — Groom Entry', turn: 'shot 11:40am → delivered 3:05pm', caption: 'Groom entry, cut in 40 mins! 💍' },
     { occasion: 'Reel — Wedding Highlight', turn: 'shot 9:00am → delivered 4:20pm', caption: 'Wedding highlights posted same-day! ✨' },
-    { occasion: 'Reel', turn: 'shot 5:30pm → delivered 9:15pm', caption: 'Traditional ceremony highlights! ⚡' },
-    { occasion: 'Reel — Store Launch', turn: 'shot 10:00am → delivered 1:45pm', caption: 'Store launch reels posted live! 🛍️' },
-    { occasion: 'Reel — Housewarming', turn: 'shot 6:00pm → delivered 9:30pm', caption: 'New home warm memories delivered tonight! 🏠' },
+    { occasion: 'Reel — Bride Showcase', turn: 'shot 11:40am → delivered 12:25pm', caption: 'Bride showcase highlights! 👰' },
+    { occasion: 'Reel — Haldi Highlights', turn: 'shot 10:00am → delivered 10:45pm', caption: 'Haldi ceremony highlights! 💛' },
+    { occasion: 'Reel — Mehandi Highlights', turn: 'shot 2:00pm → delivered 2:45pm', caption: 'Mehandi celebration highlights! 🌿' },
+    { occasion: 'Reel — Wedding Venue', turn: 'shot 5:30pm → delivered 9:15pm', caption: 'Wedding venue highlight reels! 🏰' },
   ];
   const SLIDE_MS = 4000;
   const slideEls = document.querySelectorAll('#reelSlides .reel-slide');
@@ -3292,109 +3496,331 @@
     });
   });
 
-  // reel strip placeholders (swap with real thumbnails when uploaded)
-  const reels = [
-    { tag: 'Wedding', cap: 'First dance, cut in 5 hours', video: 'assets/IMG_1479.mov' },
-    { tag: 'Groom Entry', cap: 'Stylish wedding entry reel', video: 'assets/IMG_2719.MOV' },
-    { tag: 'Reel', cap: 'Traditional ceremony highlight', video: 'assets/IMG_2837.MOV' },
-    { tag: 'Launch', cap: 'Store opening hype reel' },
-    { tag: 'Housewarming', cap: 'Walkthrough + warm moments' },
-    { tag: 'Engagement', cap: 'Ring reveal, posted live' },
+  // Structured Video Data Array
+  const videoData = [
+    {
+      id: 1,
+      title: "Wedding Highlights",
+      category: "Wedding",
+      videoUrl: "assets/video1_compressed.mp4",
+      description: "Wedding highlights, same-day delivery.",
+      featured: true
+    },
+    {
+      id: 2,
+      title: "Bride Showcase Highlights",
+      category: "Bride Video",
+      videoUrl: "assets/bridevideos_compressed.mp4",
+      description: "Bride showcase highlight.",
+      featured: true
+    },
+    {
+      id: 3,
+      title: "Haldi Ceremony Highlights",
+      category: "Haldi",
+      videoUrl: "assets/haldi_compressed.mp4",
+      description: "Haldi ceremony highlights.",
+      featured: true
+    },
+    {
+      id: 4,
+      title: "Pooja Ceremony Highlights",
+      category: "Pooja",
+      videoUrl: "assets/pooja_compressed.mp4",
+      description: "Pooja ceremony highlights.",
+      featured: false
+    },
+    {
+      id: 5,
+      title: "Mehandi Celebration Same-Day Edit",
+      category: "Mehandi",
+      videoUrl: "assets/mehandi2_compressed.mp4",
+      description: "Mehandi celebration highlights.",
+      featured: true
+    },
+    {
+      id: 6,
+      title: "Traditional Mehandi Highlights",
+      category: "Mehandi",
+      videoUrl: "assets/mehandi_compressed.mp4",
+      description: "Traditional mehandi ceremony.",
+      featured: false
+    },
+    {
+      id: 7,
+      title: "Bride Entry Highlights",
+      category: "Bride Video",
+      videoUrl: "assets/dhurandhar_compressed.mp4",
+      description: "Bride entry highlights.",
+      featured: false
+    },
+    {
+      id: 8,
+      title: "Wedding Highlights same-day cut",
+      category: "Wedding",
+      videoUrl: "assets/IMG_1479.mov",
+      description: "Wedding highlight reel.",
+      featured: false
+    },
+    {
+      id: 9,
+      title: "Traditional Ceremony Highlights",
+      category: "Ceremony",
+      videoUrl: "assets/IMG_2837.MOV",
+      description: "Traditional ceremony highlights.",
+      featured: false
+    },
+    {
+      id: 10,
+      title: "Engagement Ring Ceremony Highlights",
+      category: "Engagement",
+      videoUrl: "assets/ringCermony_compressed.mp4",
+      description: "Engagement ring ceremony highlights.",
+      featured: true
+    },
+    {
+      id: 11,
+      title: "Wedding Venue Cinematic Tour",
+      category: "Venue",
+      videoUrl: "assets/venue_compressed.mp4",
+      description: "Wedding venue highlight reel.",
+      featured: false
+    },
+    {
+      id: 12,
+      title: "Store Launch Promo Hype",
+      category: "Launch",
+      videoUrl: "", // placeholder
+      description: "Store opening hype reel.",
+      featured: false
+    },
+    {
+      id: 13,
+      title: "Premium Car Delivery Highlights",
+      category: "Car Delivery",
+      videoUrl: "assets/carDelivery_compressed.mp4",
+      description: "Luxury car delivery ceremony highlights.",
+      featured: true
+    },
+    {
+      id: 14,
+      title: "Christian Wedding Ceremony",
+      category: "Wedding",
+      videoUrl: "assets/crstianWedding_compressed.mp4",
+      description: "Beautiful Christian wedding highlight reel.",
+      featured: true
+    },
+    {
+      id: 15,
+      title: "Traditional House Warming Highlights",
+      category: "House Warming",
+      videoUrl: "assets/HouseWarming_compressed.mp4",
+      description: "House warming ceremony highlight cut.",
+      featured: false
+    },
+    {
+      id: 16,
+      title: "Cinematic Wedding Highlight Edit",
+      category: "Wedding",
+      videoUrl: "assets/wedding2_compressed.mp4",
+      description: "Cinematic wedding and pre-wedding highlights.",
+      featured: false
+    },
+    {
+      id: 17,
+      title: "Elegant Bride Entrance",
+      category: "Bride Video",
+      videoUrl: "assets/BrideVideo_compressed.mp4",
+      description: "Elegant slow-motion bridal showcase.",
+      featured: false
+    }
   ];
-  const strip = document.getElementById('reelStrip');
-  strip.innerHTML = reels.map(r => {
-    const hasVideo = !!r.video;
+
+  // Helper function to lock body scroll during modal views
+  const lockBodyScroll = () => {
+    document.body.style.overflow = 'hidden';
+    document.body.style.paddingRight = getScrollbarWidth() + 'px';
+  };
+
+  const unlockBodyScroll = () => {
+    document.body.style.overflow = '';
+    document.body.style.paddingRight = '';
+  };
+
+  const getScrollbarWidth = () => {
+    return window.innerWidth - document.documentElement.clientWidth;
+  };
+
+  // Helper to filter videos based on category
+  const getFilteredVideos = (filter) => {
+    const f = filter.toLowerCase();
+    return videoData.filter(v => {
+      if (f === 'all') return true;
+      if (f === 'wedding') {
+        return ['wedding', 'bride video', 'venue'].includes(v.category.toLowerCase());
+      }
+      if (f === 'engagement') {
+        return v.category.toLowerCase() === 'engagement';
+      }
+      if (f === 'delivery') {
+        return ['car delivery', 'delivery'].includes(v.category.toLowerCase());
+      }
+      if (f === 'ceremony') {
+        return ['ceremony', 'haldi', 'pooja', 'mehandi'].includes(v.category.toLowerCase());
+      }
+      if (f === 'other') {
+        return ['birthday', 'launch', 'house warming'].includes(v.category.toLowerCase());
+      }
+      return true;
+    });
+  };
+
+  // HTML card renderer helper
+  const createReelCardHTML = (video) => {
+    const hasVideo = !!video.videoUrl;
     const thumbnailContent = hasVideo 
-      ? `<video src="${r.video}" loop muted playsinline preload="metadata" style="width: 100%; height: 100%; object-fit: cover; position: absolute; inset: 0;"></video>`
+      ? `<video src="${video.videoUrl}" loop muted playsinline preload="metadata" style="width: 100%; height: 100%; object-fit: cover; position: absolute; inset: 0;"></video>`
       : `<div class="placeholder-glow"></div>`;
     return `
-      <div class="reel-card" ${hasVideo ? `data-video="${r.video}"` : ''} style="${hasVideo ? 'cursor: pointer;' : ''}">
+      <div class="reel-card fade-in" data-id="${video.id}" ${hasVideo ? `data-video="${video.videoUrl}"` : ''} style="${hasVideo ? 'cursor: pointer;' : ''}">
         <div class="reel-thumb">
           ${thumbnailContent}
-          <span class="reel-tag">${r.tag}</span>
+          <span class="reel-tag">${video.category}</span>
           <span class="reel-play">▶</span>
         </div>
-        <p class="reel-cap">${r.cap}</p>
+        <p class="reel-cap">${video.title}</p>
       </div>`;
-  }).join('');
+  };
 
-  // ---------- mobile horizontal scroll-linked carousel scale & opacity focusing ----------
-  if (strip) {
-    const updateMobileScrollAnimations = () => {
-      if (window.innerWidth > 640) {
-        document.querySelectorAll('.reel-strip .reel-thumb').forEach(thumb => {
-          thumb.style.transform = '';
-          thumb.style.opacity = '';
-        });
-        return;
-      }
+  // Featured Grid rendering
+  const portfolioGrid = document.getElementById('portfolioGrid');
+  const renderMainGrid = (filter = 'all') => {
+    if (!portfolioGrid) return;
+    let filtered = getFilteredVideos(filter);
+    
+    // Default homepage "All" view shows only featured videos
+    if (filter.toLowerCase() === 'all') {
+      filtered = filtered.filter(v => v.featured);
+    }
+    
+    const visible = filtered.slice(0, 6);
+    portfolioGrid.innerHTML = visible.map(v => createReelCardHTML(v)).join('');
+    setupCardHoverEvents();
+    setupCardClickEvents();
+  };
 
-      const cards = strip.querySelectorAll('.reel-card');
-      const stripRect = strip.getBoundingClientRect();
-      const stripCenter = stripRect.left + stripRect.width / 2;
+  // Horizontal Category filters trigger
+  const filterPills = document.querySelectorAll('#portfolioFilters .filter-pill');
+  filterPills.forEach(pill => {
+    pill.addEventListener('click', () => {
+      filterPills.forEach(p => p.classList.remove('active'));
+      pill.classList.add('active');
+      const filterValue = pill.getAttribute('data-filter');
+      renderMainGrid(filterValue);
+    });
+  });
 
-      cards.forEach(card => {
-        const cardRect = card.getBoundingClientRect();
-        const cardCenter = cardRect.left + cardRect.width / 2;
-        const distanceFromCenter = Math.abs(stripCenter - cardCenter);
 
-        const maxDistance = stripRect.width / 2;
-        const ratio = Math.min(distanceFromCenter / maxDistance, 1);
 
-        const scale = 1 - ratio * 0.12; // scale down to 0.88
-        const opacity = 1 - ratio * 0.45; // opacity down to 0.55
+  // Expanded Portfolio ("View All Work") modal logic
+  const expandedModal = document.getElementById('expandedPortfolioModal');
+  const expandedCloseBtn = document.getElementById('expandedCloseBtn');
+  const expandedGrid = document.getElementById('expandedPortfolioGrid');
+  const viewAllBtn = document.getElementById('viewAllWorkBtn');
+  const searchInput = document.getElementById('portfolioSearchInput');
+  const loadMoreBtn = document.getElementById('loadMoreBtn');
+  const expandedFilters = document.querySelectorAll('#expandedPortfolioFilters .filter-pill');
+  
+  let currentExpandedFilter = 'all';
+  let searchQuery = '';
+  let itemsToShow = 8;
 
-        const thumb = card.querySelector('.reel-thumb');
-        if (thumb) {
-          thumb.style.transform = `scale(${scale})`;
-          thumb.style.opacity = opacity;
-        }
-      });
-    };
+  const openExpandedPortfolio = (initialFilter = 'all') => {
+    currentExpandedFilter = initialFilter;
+    searchQuery = '';
+    itemsToShow = 8;
+    if (searchInput) searchInput.value = '';
 
-    strip.addEventListener('scroll', updateMobileScrollAnimations);
-    window.addEventListener('resize', updateMobileScrollAnimations);
-    setTimeout(updateMobileScrollAnimations, 100);
+    expandedFilters.forEach(pill => {
+      pill.classList.toggle('active', pill.getAttribute('data-filter') === initialFilter);
+    });
+
+    expandedModal.style.display = 'flex';
+    lockBodyScroll();
+    setTimeout(() => {
+      expandedModal.classList.add('show');
+    }, 10);
+
+    renderExpandedGrid();
+  };
+
+  const closeExpandedPortfolio = () => {
+    expandedModal.classList.remove('show');
+    unlockBodyScroll();
+    setTimeout(() => {
+      expandedModal.style.display = 'none';
+    }, 350);
+  };
+
+  if (viewAllBtn) {
+    viewAllBtn.addEventListener('click', () => openExpandedPortfolio('all'));
+  }
+  if (expandedCloseBtn) {
+    expandedCloseBtn.addEventListener('click', closeExpandedPortfolio);
   }
 
-  // ---------- 3D Tilt animation for desktop viewports ----------
-  document.querySelectorAll('.reel-card').forEach(card => {
-    const thumb = card.querySelector('.reel-thumb');
-    if (!thumb) return;
-
-    card.addEventListener('mousemove', (e) => {
-      if (window.innerWidth <= 640) return;
-
-      const rect = thumb.getBoundingClientRect();
-      const px = (e.clientX - rect.left) / rect.width - 0.5; // range [-0.5, 0.5]
-      const py = (e.clientY - rect.top) / rect.height - 0.5; // range [-0.5, 0.5]
-      
-      const tiltY = px * 12; // rotation around vertical Y
-      const tiltX = py * -12; // rotation around horizontal X
-      
-      thumb.style.transform = `translateY(-5px) rotateX(${tiltX}deg) rotateY(${tiltY}deg) scale(1.02)`;
-    });
-
-    card.addEventListener('mouseleave', () => {
-      if (window.innerWidth <= 640) return;
-      thumb.style.transform = '';
+  expandedFilters.forEach(pill => {
+    pill.addEventListener('click', () => {
+      expandedFilters.forEach(p => p.classList.remove('active'));
+      pill.classList.add('active');
+      currentExpandedFilter = pill.getAttribute('data-filter');
+      itemsToShow = 8;
+      renderExpandedGrid();
     });
   });
 
-  // Play/pause on hover for reel strip cards
-  document.querySelectorAll('.reel-card[data-video]').forEach(card => {
-    const video = card.querySelector('video');
-    if (video) {
-      card.addEventListener('mouseenter', () => {
-        video.play().catch(() => {});
-      });
-      card.addEventListener('mouseleave', () => {
-        video.pause();
-        video.currentTime = 0;
-      });
+  if (searchInput) {
+    searchInput.addEventListener('input', (e) => {
+      searchQuery = e.target.value.toLowerCase().trim();
+      itemsToShow = 8;
+      renderExpandedGrid();
+    });
+  }
+
+  if (loadMoreBtn) {
+    loadMoreBtn.addEventListener('click', () => {
+      itemsToShow += 8;
+      renderExpandedGrid();
+    });
+  }
+
+  const renderExpandedGrid = () => {
+    if (!expandedGrid) return;
+
+    let filtered = getFilteredVideos(currentExpandedFilter);
+
+    if (searchQuery) {
+      filtered = filtered.filter(v => 
+        v.title.toLowerCase().includes(searchQuery) ||
+        v.category.toLowerCase().includes(searchQuery) ||
+        v.description.toLowerCase().includes(searchQuery)
+      );
     }
-  });
 
+    const visibleItems = filtered.slice(0, itemsToShow);
+    expandedGrid.innerHTML = visibleItems.map(v => createReelCardHTML(v)).join('');
+
+    if (filtered.length > itemsToShow) {
+      loadMoreBtn.style.display = 'inline-block';
+    } else {
+      loadMoreBtn.style.display = 'none';
+    }
+
+    setupCardHoverEvents();
+    setupCardClickEvents();
+  };
+
+  // Fullscreen Lightbox Modal and navigation controls
   const modal = document.getElementById('reelModal');
   const modalVideo = document.getElementById('modalVideo');
   const closeBtn = document.getElementById('closeReelBtn');
@@ -3402,24 +3828,97 @@
   const modalPlayIndicator = document.getElementById('modalPlayIndicator');
   const modalProgressBar = document.getElementById('modalProgressBar');
   const modalProgressFill = document.getElementById('modalProgressFill');
+  const modalPrevBtn = document.getElementById('modalPrevBtn');
+  const modalNextBtn = document.getElementById('modalNextBtn');
+  const modalTitle = document.getElementById('modalVideoTitle');
+  const modalCategory = document.getElementById('modalVideoCategory');
 
-  // open modal on card click
-  document.querySelectorAll('.reel-card[data-video]').forEach(card => {
-    card.addEventListener('click', () => {
-      const videoSrc = card.getAttribute('data-video');
-      modalVideo.src = videoSrc;
-      modalVideo.muted = false; // Start with sound by default
-      updateSoundButtonUI();
-      modal.style.display = 'flex';
-      setTimeout(() => {
-        modal.style.opacity = '1';
-      }, 10);
-      modalVideo.play().catch(() => {});
-      modalPlayIndicator.classList.remove('show-paused');
+  let activePlaylist = [];
+  let currentPlaylistIdx = 0;
+
+  const setupCardClickEvents = () => {
+    document.querySelectorAll('.reel-card[data-video]').forEach(card => {
+      card.removeEventListener('click', onCardClick);
+      card.addEventListener('click', onCardClick);
     });
-  });
+  };
 
-  // toggle play/pause when clicking the video
+  const onCardClick = (e) => {
+    const card = e.currentTarget;
+    const parentContainer = card.parentElement;
+    const siblings = Array.from(parentContainer.querySelectorAll('.reel-card[data-video]'));
+    
+    activePlaylist = siblings.map(sibling => {
+      const id = parseInt(sibling.getAttribute('data-id'), 10);
+      return videoData.find(v => v.id === id);
+    }).filter(Boolean);
+
+    const activeId = parseInt(card.getAttribute('data-id'), 10);
+    currentPlaylistIdx = activePlaylist.findIndex(v => v.id === activeId);
+
+    if (currentPlaylistIdx !== -1) {
+      openReelModal(activePlaylist[currentPlaylistIdx]);
+    }
+  };
+
+  const openReelModal = (video) => {
+    if (!video || !video.videoUrl) return;
+
+    modalVideo.src = video.videoUrl;
+    modalVideo.muted = false;
+    updateSoundButtonUI();
+
+    if (modalTitle) modalTitle.textContent = video.title;
+    if (modalCategory) modalCategory.textContent = video.category;
+
+    modal.style.display = 'flex';
+    lockBodyScroll();
+    setTimeout(() => {
+      modal.style.opacity = '1';
+    }, 10);
+
+    modalVideo.play().catch(() => {});
+    modalPlayIndicator.classList.remove('show-paused');
+    updateModalNavBtnState();
+  };
+
+  const updateModalNavBtnState = () => {
+    if (modalPrevBtn && modalNextBtn) {
+      if (activePlaylist.length <= 1) {
+        modalPrevBtn.style.display = 'none';
+        modalNextBtn.style.display = 'none';
+      } else {
+        modalPrevBtn.style.display = 'flex';
+        modalNextBtn.style.display = 'flex';
+      }
+    }
+  };
+
+  const playNextVideo = () => {
+    if (activePlaylist.length <= 1) return;
+    currentPlaylistIdx = (currentPlaylistIdx + 1) % activePlaylist.length;
+    openReelModal(activePlaylist[currentPlaylistIdx]);
+  };
+
+  const playPrevVideo = () => {
+    if (activePlaylist.length <= 1) return;
+    currentPlaylistIdx = (currentPlaylistIdx - 1 + activePlaylist.length) % activePlaylist.length;
+    openReelModal(activePlaylist[currentPlaylistIdx]);
+  };
+
+  if (modalPrevBtn) {
+    modalPrevBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      playPrevVideo();
+    });
+  }
+  if (modalNextBtn) {
+    modalNextBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      playNextVideo();
+    });
+  }
+
   modalVideo.addEventListener('click', () => {
     if (modalVideo.paused) {
       modalVideo.play().catch(() => {});
@@ -3430,7 +3929,6 @@
     }
   });
 
-  // sound toggle click
   if (modalSoundBtn) {
     modalSoundBtn.addEventListener('click', () => {
       modalVideo.muted = !modalVideo.muted;
@@ -3451,7 +3949,6 @@
     }
   }
 
-  // update progress fill on time update
   modalVideo.addEventListener('timeupdate', () => {
     if (modalVideo.duration) {
       const pct = (modalVideo.currentTime / modalVideo.duration) * 100;
@@ -3459,7 +3956,6 @@
     }
   });
 
-  // seek video when clicking progress bar
   if (modalProgressBar) {
     modalProgressBar.addEventListener('click', (e) => {
       if (modalVideo.duration) {
@@ -3470,9 +3966,9 @@
     });
   }
 
-  // close modal function
   function closeReelModal() {
     modal.style.opacity = '0';
+    unlockBodyScroll();
     setTimeout(() => {
       modal.style.display = 'none';
       modalVideo.pause();
@@ -3488,6 +3984,75 @@
       closeReelModal();
     }
   });
+
+  // Desktop Hover and 3D Tilt events logic
+  const setupCardHoverEvents = () => {
+    document.querySelectorAll('.reel-card').forEach(card => {
+      const thumb = card.querySelector('.reel-thumb');
+      if (!thumb) return;
+
+      card.removeEventListener('mousemove', onCardMouseMove);
+      card.addEventListener('mousemove', onCardMouseMove);
+
+      card.removeEventListener('mouseleave', onCardMouseLeave);
+      card.addEventListener('mouseleave', onCardMouseLeave);
+      
+      const video = card.querySelector('video');
+      if (video) {
+        card.removeEventListener('mouseenter', onCardMouseEnter);
+        card.addEventListener('mouseenter', onCardMouseEnter);
+
+        card.removeEventListener('mouseleave', onCardMouseEnterLeave);
+        card.addEventListener('mouseleave', onCardMouseEnterLeave);
+      }
+    });
+  };
+
+  const onCardMouseMove = (e) => {
+    if (window.innerWidth <= 640) return;
+    const card = e.currentTarget;
+    const thumb = card.querySelector('.reel-thumb');
+    if (!thumb) return;
+
+    const rect = thumb.getBoundingClientRect();
+    const px = (e.clientX - rect.left) / rect.width - 0.5;
+    const py = (e.clientY - rect.top) / rect.height - 0.5;
+    
+    const tiltY = px * 12;
+    const tiltX = py * -12;
+    
+    const isFirstChild = card.parentElement.firstElementChild === card;
+    const scale = isFirstChild && window.innerWidth >= 1000 ? 1.01 : 1.03;
+
+    thumb.style.transform = `translateY(-5px) rotateX(${tiltX}deg) rotateY(${tiltY}deg) scale(${scale})`;
+  };
+
+  const onCardMouseLeave = (e) => {
+    if (window.innerWidth <= 640) return;
+    const card = e.currentTarget;
+    const thumb = card.querySelector('.reel-thumb');
+    if (thumb) thumb.style.transform = '';
+  };
+
+  const onCardMouseEnter = (e) => {
+    const card = e.currentTarget;
+    const video = card.querySelector('video');
+    if (video) {
+      video.play().catch(() => {});
+    }
+  };
+
+  const onCardMouseEnterLeave = (e) => {
+    const card = e.currentTarget;
+    const video = card.querySelector('video');
+    if (video) {
+      video.pause();
+      video.currentTime = 0;
+    }
+  };
+
+  // Initial render of Main Grid
+  renderMainGrid('all');
 
   // ---------- cost calculator logic ----------
   const baseCoveragePills = document.querySelectorAll('#baseCoveragePills .calc-pill');
@@ -3754,125 +4319,9 @@
     });
   }
 
-  // ---------- Portfolio Occasion Category Filtering ----------
-  const filterPills = document.querySelectorAll('#portfolioFilters .filter-pill');
-  const reelCards = () => document.querySelectorAll('#reelStrip .reel-card');
 
-  filterPills.forEach(pill => {
-    pill.addEventListener('click', () => {
-      filterPills.forEach(p => p.classList.remove('active'));
-      pill.classList.add('active');
 
-      const filterValue = pill.getAttribute('data-filter');
 
-      reelCards().forEach(card => {
-        const tagEl = card.querySelector('.reel-tag');
-        if (!tagEl) return;
-        const tag = tagEl.textContent.trim();
-        
-        const isMatch = filterValue === 'all' || 
-                        tag.toLowerCase() === filterValue.toLowerCase() ||
-                        (filterValue === 'Wedding' && (tag === 'Wedding' || tag === 'Groom Entry')) ||
-                        (filterValue === 'Launch' && tag === 'Launch');
-
-        if (isMatch) {
-          card.classList.remove('filtered-out');
-          card.style.opacity = '0';
-          card.style.transform = 'scale(0.96) translateY(5px)';
-          setTimeout(() => {
-            card.style.opacity = '1';
-            card.style.transform = 'scale(1) translateY(0)';
-          }, 30);
-        } else {
-          card.classList.add('filtered-out');
-        }
-      });
-
-      const stripElement = document.getElementById('reelStrip');
-      if (stripElement && window.innerWidth <= 640) {
-        stripElement.dispatchEvent(new Event('scroll'));
-      }
-    });
-  });
-
-  // ---------- Before/After Video Split-Slider ----------
-  const slider = document.getElementById('comparisonSlider');
-  const afterContainer = document.getElementById('afterVideoContainer');
-  const handle = document.getElementById('sliderHandle');
-  const beforeVideo = document.querySelector('.before-video video');
-  const afterVideo = document.querySelector('.after-video video');
-
-  if (beforeVideo && afterVideo) {
-    const syncVideos = () => {
-      if (Math.abs(beforeVideo.currentTime - afterVideo.currentTime) > 0.08) {
-        afterVideo.currentTime = beforeVideo.currentTime;
-      }
-      if (beforeVideo.paused !== afterVideo.paused) {
-        if (beforeVideo.paused) {
-          afterVideo.pause();
-        } else {
-          afterVideo.play().catch(() => {});
-        }
-      }
-    };
-    beforeVideo.addEventListener('play', syncVideos);
-    beforeVideo.addEventListener('pause', syncVideos);
-    beforeVideo.addEventListener('seeking', syncVideos);
-    beforeVideo.addEventListener('timeupdate', syncVideos);
-    
-    setInterval(() => {
-      if (!beforeVideo.paused && Math.abs(beforeVideo.currentTime - afterVideo.currentTime) > 0.1) {
-        afterVideo.currentTime = beforeVideo.currentTime;
-      }
-    }, 500);
-  }
-
-  if (slider && afterContainer && handle && afterVideo) {
-    let isDragging = false;
-
-    const setPosition = (clientX) => {
-      const rect = slider.getBoundingClientRect();
-      const offset = clientX - rect.left;
-      const percentage = Math.max(0, Math.min(offset / rect.width, 1)) * 100;
-      
-      afterContainer.style.width = percentage + '%';
-      handle.style.left = percentage + '%';
-      
-      afterVideo.style.width = rect.width + 'px';
-    };
-
-    const handleStart = (e) => {
-      isDragging = true;
-      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-      setPosition(clientX);
-    };
-
-    const handleMove = (e) => {
-      if (!isDragging) return;
-      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-      requestAnimationFrame(() => {
-        setPosition(clientX);
-      });
-    };
-
-    const handleEnd = () => {
-      isDragging = false;
-    };
-
-    slider.addEventListener('mousedown', handleStart);
-    window.addEventListener('mousemove', handleMove);
-    window.addEventListener('mouseup', handleEnd);
-
-    slider.addEventListener('touchstart', handleStart, { passive: true });
-    window.addEventListener('touchmove', handleMove, { passive: true });
-    window.addEventListener('touchend', handleEnd);
-
-    const resizeObserver = new ResizeObserver(() => {
-      const rect = slider.getBoundingClientRect();
-      afterVideo.style.width = rect.width + 'px';
-    });
-    resizeObserver.observe(slider);
-  }
 
   // ---------- Testimonials Slider Carousel ----------
   const testiCards = document.querySelectorAll('#testiCarousel .testi-card');
