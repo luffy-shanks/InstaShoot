@@ -2526,12 +2526,12 @@
               <div class="reel-video-text">Wedding Highlight ✨</div>
             </div>
             <div class="reel-slide s2">
-              <video src="assets/wedding2_compressed.mp4" loop muted playsinline preload="metadata" style="width: 100%; height: 100%; object-fit: cover; display: block;"></video>
-              <div class="reel-video-text">Wedding Highlight ✨</div>
-            </div>
-            <div class="reel-slide s3">
               <video src="assets/haldi_compressed.mp4" loop muted playsinline preload="metadata" style="width: 100%; height: 100%; object-fit: cover; display: block;"></video>
               <div class="reel-video-text">Haldi Highlights 💛</div>
+            </div>
+            <div class="reel-slide s3">
+              <video src="assets/wedding2_compressed.mp4" loop muted playsinline preload="metadata" style="width: 100%; height: 100%; object-fit: cover; display: block;"></video>
+              <div class="reel-video-text">Wedding Highlight ✨</div>
             </div>
             <div class="reel-slide s4">
               <video src="assets/mehandi2_compressed.mp4" loop muted playsinline preload="metadata" style="width: 100%; height: 100%; object-fit: cover; display: block;"></video>
@@ -3222,8 +3222,8 @@
   // hero "live edit" cycling reel
   const heroSlides = [
     { occasion: 'Reel — Wedding Highlight', turn: 'shot 9:00am → delivered 4:20pm', caption: 'Wedding highlights posted same-day! ✨' },
-    { occasion: 'Reel — Wedding Highlight', turn: 'shot 11:40am → delivered 4:15pm', caption: 'Wedding highlights same-day delivery! ✨' },
     { occasion: 'Reel — Haldi Highlights', turn: 'shot 10:00am → delivered 10:45pm', caption: 'Haldi ceremony highlights! 💛' },
+    { occasion: 'Reel — Wedding Highlight', turn: 'shot 11:40am → delivered 4:15pm', caption: 'Wedding highlights same-day delivery! ✨' },
     { occasion: 'Reel — Mehandi Highlights', turn: 'shot 2:00pm → delivered 2:45pm', caption: 'Mehandi celebration highlights! 🌿' },
     { occasion: 'Reel — Engagement Highlight', turn: 'shot 5:30pm → delivered 9:15pm', caption: 'Engagement highlights posted same-day! 💫' },
   ];
@@ -3406,8 +3406,22 @@
     // Touch events
     leftZone.addEventListener('touchstart', (e) => handleZoneStart(e, true), { passive: false });
     leftZone.addEventListener('touchend', (e) => handleZoneEnd(e, true), { passive: false });
+    leftZone.addEventListener('touchcancel', () => {
+      clearTimeout(holdTimer);
+      if (isHolding) {
+        resumeHeroSlide();
+        isHolding = false;
+      }
+    });
     rightZone.addEventListener('touchstart', (e) => handleZoneStart(e, false), { passive: false });
     rightZone.addEventListener('touchend', (e) => handleZoneEnd(e, false), { passive: false });
+    rightZone.addEventListener('touchcancel', () => {
+      clearTimeout(holdTimer);
+      if (isHolding) {
+        resumeHeroSlide();
+        isHolding = false;
+      }
+    });
   }
 
   // headline rotating words
