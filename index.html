@@ -3751,6 +3751,22 @@
       videoUrl: "assets/BrideVideo_compressed.mp4",
       description: "Elegant slow-motion bridal showcase.",
       featured: false
+    },
+    {
+      id: 18,
+      title: "Seemantham",
+      category: "Seemantham",
+      videoUrl: "assets/chinnari_compressed.mp4",
+      description: "Seemantham ceremony highlights.",
+      featured: true
+    },
+    {
+      id: 19,
+      title: "Seemantham",
+      category: "Seemantham",
+      videoUrl: "assets/chinnari_bava_compressed.mp4",
+      description: "Seemantham ceremony highlights.",
+      featured: true
     }
   ];
 
@@ -3784,7 +3800,7 @@
         return ['car delivery', 'delivery'].includes(v.category.toLowerCase());
       }
       if (f === 'ceremony') {
-        return ['ceremony', 'haldi', 'pooja', 'mehandi'].includes(v.category.toLowerCase());
+        return ['ceremony', 'haldi', 'pooja', 'mehandi', 'seemantham'].includes(v.category.toLowerCase());
       }
       if (f === 'other') {
         return ['birthday', 'launch', 'house warming'].includes(v.category.toLowerCase());
