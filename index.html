@@ -2023,23 +2023,29 @@
     z-index: 1000;
   }
   .modal-wrapper {
-    width: 100%;
-    max-width: 380px;
-    aspect-ratio: 9/16;
-    max-height: 85vh;
+    width: 360px; /* Fallback default width */
+    height: 640px; /* Fallback default height (9:16) */
+    max-width: 95vw;
+    max-height: 82vh;
     background: #000;
     border-radius: 20px;
     overflow: hidden;
     box-shadow: 0 30px 80px rgba(0,0,0,0.85);
     position: relative;
     border: 1px solid rgba(255,255,255,0.08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* Smooth dimensional transition */
+    transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1), height 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   }
   #modalVideo {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain;
     display: block;
     cursor: pointer;
+    background: #000;
   }
   .custom-video-controls {
     position: absolute;
@@ -3875,6 +3881,40 @@
     }
   };
 
+  const adjustModalSize = () => {
+    const videoWidth = modalVideo.videoWidth;
+    const videoHeight = modalVideo.videoHeight;
+    if (!videoWidth || !videoHeight) return;
+
+    const ratio = videoWidth / videoHeight;
+    
+    // Max bounds: 95vw wide, 82vh tall
+    const containerMaxWidth = window.innerWidth * 0.95;
+    const containerMaxHeight = window.innerHeight * 0.82;
+    
+    let targetWidth = containerMaxWidth;
+    let targetHeight = containerMaxWidth / ratio;
+    
+    if (targetHeight > containerMaxHeight) {
+      targetHeight = containerMaxHeight;
+      targetWidth = containerMaxHeight * ratio;
+    }
+    
+    const modalWrapper = document.querySelector('.modal-wrapper');
+    if (modalWrapper) {
+      modalWrapper.style.width = `${Math.round(targetWidth)}px`;
+      modalWrapper.style.height = `${Math.round(targetHeight)}px`;
+    }
+  };
+
+  modalVideo.addEventListener('loadedmetadata', adjustModalSize);
+
+  window.addEventListener('resize', () => {
+    if (modal.style.display === 'flex') {
+      adjustModalSize();
+    }
+  });
+
   const openReelModal = (video) => {
     if (!video || !video.videoUrl) return;
 
@@ -3989,6 +4029,12 @@
       modalVideo.src = '';
       if (modalProgressFill) modalProgressFill.style.width = '0%';
       modalPlayIndicator.classList.remove('show-paused');
+      // Reset modal wrapper inline dimensions for next use
+      const modalWrapper = document.querySelector('.modal-wrapper');
+      if (modalWrapper) {
+        modalWrapper.style.width = '';
+        modalWrapper.style.height = '';
+      }
     }, 300);
   }
 
