@@ -1312,12 +1312,15 @@
     }
   }
   
-  .reel-thumb video {
+  .reel-thumb video, .reel-thumb img {
     width: 100%;
     height: 100%;
     object-fit: cover;
     display: block;
     transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .reel-card:hover img {
+    transform: scale(1.06);
   }
   
   .reel-tag {
@@ -2137,6 +2140,30 @@
     width: 0%;
     background: linear-gradient(90deg, var(--accent-yellow), var(--accent-blue));
     border-radius: 2px;
+  }
+  
+  /* Modal Loading Spinner */
+  .modal-loader {
+    position: absolute;
+    inset: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1008;
+    pointer-events: none;
+  }
+  .modal-loader .spinner {
+    width: 48px;
+    height: 48px;
+    border: 4px solid rgba(255, 255, 255, 0.1);
+    border-top: 4px solid var(--accent-yellow);
+    border-radius: 50%;
+    animation: modalSpin 1s linear infinite;
+  }
+  @keyframes modalSpin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
   }
   
   /* Close Button Custom Styling */
@@ -3038,6 +3065,9 @@
   <button id="closeReelBtn" aria-label="Close video" style="position: absolute; top: 24px; right: 24px; background: none; border: none; color: #fff; font-size: 38px; cursor: pointer; z-index: 1010; transition: transform 0.2s ease;">&times;</button>
   
   <div class="modal-wrapper">
+    <div class="modal-loader" id="modalLoader">
+      <div class="spinner"></div>
+    </div>
     <video id="modalVideo" src="" loop autoplay playsinline></video>
     
     <!-- Custom control layers -->
@@ -3699,7 +3729,7 @@
   const createReelCardHTML = (video) => {
     const hasVideo = !!video.videoUrl;
     const thumbnailContent = hasVideo 
-      ? `<video src="${video.videoUrl}" loop muted playsinline preload="metadata" style="width: 100%; height: 100%; object-fit: cover; position: absolute; inset: 0;"></video>`
+      ? `<img src="assets/thumbnails/thumb_${video.id}.webp" alt="${video.title}" loading="lazy" style="width: 100%; height: 100%; object-fit: cover; position: absolute; inset: 0; transition: opacity 0.3s ease;">`
       : `<div class="placeholder-glow"></div>`;
     return `
       <div class="reel-card fade-in" data-id="${video.id}" ${hasVideo ? `data-video="${video.videoUrl}"` : ''} style="${hasVideo ? 'cursor: pointer;' : ''}">
@@ -3915,8 +3945,16 @@
     }
   });
 
+  const modalLoader = document.getElementById('modalLoader');
+
   const openReelModal = (video) => {
     if (!video || !video.videoUrl) return;
+
+    // Reset loader to default spinner
+    if (modalLoader) {
+      modalLoader.style.display = 'flex';
+      modalLoader.innerHTML = '<div class="spinner"></div>';
+    }
 
     modalVideo.src = video.videoUrl;
     modalVideo.muted = false;
@@ -3935,6 +3973,26 @@
     modalPlayIndicator.classList.remove('show-paused');
     updateModalNavBtnState();
   };
+
+  // Video buffering / loading events for spinner
+  modalVideo.addEventListener('waiting', () => {
+    if (modalLoader) modalLoader.style.display = 'flex';
+  });
+  modalVideo.addEventListener('loadstart', () => {
+    if (modalLoader) modalLoader.style.display = 'flex';
+  });
+  modalVideo.addEventListener('playing', () => {
+    if (modalLoader) modalLoader.style.display = 'none';
+  });
+  modalVideo.addEventListener('canplay', () => {
+    if (modalLoader) modalLoader.style.display = 'none';
+  });
+  modalVideo.addEventListener('error', () => {
+    if (modalLoader) {
+      modalLoader.style.display = 'flex';
+      modalLoader.innerHTML = '<p style="color: #ff4a4a; font-size: 13px; font-family: var(--mono); text-align: center; padding: 12px; font-weight: 700;">⚠️ Failed to load video</p>';
+    }
+  });
 
   const updateModalNavBtnState = () => {
     if (modalPrevBtn && modalNextBtn) {
@@ -4057,8 +4115,7 @@
       card.removeEventListener('mouseleave', onCardMouseLeave);
       card.addEventListener('mouseleave', onCardMouseLeave);
       
-      const video = card.querySelector('video');
-      if (video) {
+      if (card.hasAttribute('data-video')) {
         card.removeEventListener('mouseenter', onCardMouseEnter);
         card.addEventListener('mouseenter', onCardMouseEnter);
 
@@ -4095,19 +4152,57 @@
   };
 
   const onCardMouseEnter = (e) => {
+    if (window.innerWidth <= 640) return; // Disable hover video preview on mobile to save data and prevent lag
+    
     const card = e.currentTarget;
-    const video = card.querySelector('video');
-    if (video) {
-      video.play().catch(() => {});
+    const videoUrl = card.getAttribute('data-video');
+    if (!videoUrl) return;
+
+    const thumb = card.querySelector('.reel-thumb');
+    if (!thumb) return;
+
+    let video = thumb.querySelector('video');
+    if (!video) {
+      video = document.createElement('video');
+      video.src = videoUrl;
+      video.loop = true;
+      video.muted = true;
+      video.playsinline = true;
+      video.style.width = '100%';
+      video.style.height = '100%';
+      video.style.objectFit = 'cover';
+      video.style.position = 'absolute';
+      video.style.inset = '0';
+      video.style.opacity = '0';
+      video.style.transition = 'opacity 0.3s ease';
+      video.style.zIndex = '1';
+      
+      thumb.appendChild(video);
     }
+
+    video.play().then(() => {
+      video.style.opacity = '1';
+    }).catch(() => {});
   };
 
   const onCardMouseEnterLeave = (e) => {
     const card = e.currentTarget;
-    const video = card.querySelector('video');
+    const thumb = card.querySelector('.reel-thumb');
+    if (!thumb) return;
+
+    const video = thumb.querySelector('video');
     if (video) {
       video.pause();
-      video.currentTime = 0;
+      video.style.opacity = '0';
+      // Wait for fade transition, then destroy the element to free up system memory
+      setTimeout(() => {
+        if (video.parentNode === thumb && video.style.opacity === '0') {
+          video.pause();
+          video.src = '';
+          video.load();
+          video.remove();
+        }
+      }, 300);
     }
   };
 
